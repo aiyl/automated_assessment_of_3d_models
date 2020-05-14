@@ -1,9 +1,9 @@
+#!/usr/bin/env python
 """This script shows another example of using the PyWavefront module."""
 # This example was created by intrepid94
 import ctypes
 import os
 import sys
-from pyglet.window import key
 sys.path.append('..')
 
 import pyglet
@@ -13,21 +13,17 @@ from pywavefront import visualization
 from pywavefront import Wavefront
 
 # Create absolute path from this module
-file_abspath = os.path.join(os.path.dirname(__file__), 'check1.obj')
-#pymesh.load_mesh("solve22.obj")
+file_abspath = os.path.join(os.path.dirname(__file__), 'data/earth.obj')
+
 rotation = 0.0
 meshes = Wavefront(file_abspath)
-print(meshes.meshes)
 window = pyglet.window.Window(1024, 720, caption='Demo', resizable=True)
-keys = key.KeyStateHandler()
-window.push_handlers(keys)
-
 lightfv = ctypes.c_float * 4
 label = pyglet.text.Label(
     'Hello, world',
     font_name='Times New Roman',
     font_size=12,
-    x=500, y=500,
+    x=1098, y=1000,
     anchor_x='center', anchor_y='center')
 
 
@@ -35,6 +31,7 @@ label = pyglet.text.Label(
 def on_resize(width, height):
     viewport_width, viewport_height = window.get_framebuffer_size()
     glViewport(0, 0, viewport_width, viewport_height)
+
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     gluPerspective(40.0, float(width) / height, 1.0, 100.0)
@@ -53,9 +50,11 @@ def on_draw():
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightfv(0.5, 0.5, 0.5, 1.0))
     glEnable(GL_LIGHT0)
     glEnable(GL_LIGHTING)
+
     glEnable(GL_COLOR_MATERIAL)
     glEnable(GL_DEPTH_TEST)
     glShadeModel(GL_SMOOTH)
+
     glMatrixMode(GL_MODELVIEW)
 
     # glTranslated(0, 4, -8)
@@ -63,7 +62,7 @@ def on_draw():
     # glRotatef(-60, 0, 0, 1)
 
     # Rotations for sphere on axis - useful
-    glTranslated(move2, .8, -20)
+    glTranslated(0, .8, -20)
     glRotatef(-66.5, 0, 0, 1)
     glRotatef(rotation, 1, 0, 0)
     glRotatef(90, 0, 0, 1)
@@ -73,15 +72,12 @@ def on_draw():
 
 def update(dt):
     global rotation
-    global move2
-    rotation += 30 * dt
+
+    rotation += 45 * dt
 
     if rotation > 720.0:
         rotation = 0.0
-    if key.LEFT:
-        move2 = -5
-    if key.RIGHT:
-        move2 = 5
+
 
 pyglet.clock.schedule(update)
 pyglet.app.run()
