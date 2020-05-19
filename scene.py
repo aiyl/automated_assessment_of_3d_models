@@ -4,32 +4,31 @@ import ctypes
 import os
 import sys
 from pyglet.window import key
+from pyglet.window import mouse
 sys.path.append('..')
-
 import pyglet
 from pyglet.gl import *
-
 from pywavefront import visualization
 from pywavefront import Wavefront
 
 # Create absolute path from this module
 file_abspath = os.path.join(os.path.dirname(__file__), 'check1.obj')
-#pymesh.load_mesh("solve22.obj")
+plane_path = os.path.join(os.path.dirname(__file__), 'check4.obj')
 rotation = 0.0
-meshes = Wavefront(file_abspath)
-print(meshes.meshes)
+pos =[0, 0, -20]
+mesh = Wavefront(file_abspath)
+plane = Wavefront(plane_path)
+meshes = []
+meshes.append(mesh)
+material = mesh.materials
+print(mesh.materials)
+
 window = pyglet.window.Window(1024, 720, caption='Demo', resizable=True)
+pyglet.gl.glClearColor(1,1,1,1)
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
-
+window.push_handlers(pyglet.window.event.WindowEventLogger())
 lightfv = ctypes.c_float * 4
-label = pyglet.text.Label(
-    'Hello, world',
-    font_name='Times New Roman',
-    font_size=12,
-    x=500, y=500,
-    anchor_x='center', anchor_y='center')
-
 
 @window.event
 def on_resize(width, height):
@@ -45,7 +44,6 @@ def on_resize(width, height):
 @window.event
 def on_draw():
     window.clear()
-
     glLoadIdentity()
 
     glLightfv(GL_LIGHT0, GL_POSITION, lightfv(-40.0, 200.0, 100.0, 0.0))
@@ -63,15 +61,47 @@ def on_draw():
     # glRotatef(-60, 0, 0, 1)
 
     # Rotations for sphere on axis - useful
-    glTranslated(move2, .8, -20)
+    glTranslatef(*pos)
     glRotatef(-66.5, 0, 0, 1)
-    glRotatef(rotation, 1, 0, 0)
-    glRotatef(90, 0, 0, 1)
-    glRotatef(0, 0, 1, 0)
+    glRotatef(rotation, 1, 1, 0)
+    #glRotatef(90, 0, 0, 1)
+    #glRotatef(0, 0, 1, 0)
+    visualization.draw(meshes[0])
 
-    visualization.draw(meshes)
+@window.event
+def on_mouse_scroll(x, y, scroll_x, scroll_y):
+    if scroll_y == 1:
+        pos[2] -=1
+    else:
+        pos[2] +=1
+    pass
 
-def update(dt):
+@window.event
+def on_key_press(s,m):
+    global rotation
+    if s == pyglet.window.key.LEFT:
+        pos[0] -=1
+    if s == pyglet.window.key.RIGHT:
+        pos[0] +=1
+    if s == pyglet.window.key.DOWN:
+        pos[1] -=1
+    if s == pyglet.window.key.UP:
+        pos[1] +=1
+    if s == pyglet.window.key.A:
+        rotation +=5
+    if rotation > 720.0:
+        rotation = 0.0
+    if s == pyglet.window.key.D:
+        rotation -= 5
+
+@window.event
+def on_mouse_press (x,y, button, modifier):
+    if button == mouse.RIGHT:
+        print('Right mouse was pressed')
+    elif button == mouse.LEFT:
+        print('Left mouse was pressed')
+
+"""def update(dt):
     global rotation
     global move2
     rotation += 30 * dt
@@ -81,7 +111,7 @@ def update(dt):
     if key.LEFT:
         move2 = -5
     if key.RIGHT:
-        move2 = 5
+        move2 = 5 """
 
-pyglet.clock.schedule(update)
+#pyglet.clock.schedule(update)
 pyglet.app.run()
