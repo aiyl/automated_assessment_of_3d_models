@@ -1,25 +1,42 @@
 import numpy as np
 import trimesh
 import pyglet
+from csg.core import CSG
 from pyglet.gl import *
 import glooey
-from trimesh.viewer import windowed
-
-mesh = trimesh.load('check1.obj')
-mesh2 = trimesh.load('check2.obj')
-meshes =[]
-meshes.append(mesh)
-meshes.append(mesh2)
-mesh.apply_transform(trimesh.transformations.random_rotation_matrix())
-scene = trimesh.Scene(meshes)
+from trimesh import Trimesh
+from trimesh.viewer import windowed, SceneViewer
 
 
-#scene.show()
+class Checker():
+    def __init__(self, mesh):
+        print(mesh)
 
-print(mesh.process(validate = False))
-print('meshes duplicate faces ',mesh.remove_duplicate_faces())
-print('mesh is sealed ', mesh.is_watertight)
-#print(mesh.vertex_faces)
-#mesh.show()
+if __name__ == '__main__':
+    obj = trimesh.load('Tests/separate_face.obj', process=False)
+    try:
+        meshes_list = obj.dump()
+        meshes = meshes_list.sum()
+        print(meshes.vertex_faces)
+        print('winding consistent for list ', meshes.is_winding_consistent)
+        print('watertight ', meshes.is_watertight)
+        print('volume', meshes.is_volume)
+    except:
+        mesh = obj
+        print(mesh.faces)
+        print('broken faces ', trimesh.repair.broken_faces(mesh ))
+        #trimesh.repair.fill_holes(mesh)
+        print('unnormal normals', trimesh.repair.fix_inversion( mesh , multibody = False ))
+        print('winding consistent ',mesh.is_winding_consistent) #winding consistent - непрерывная сетка?
+        print('watertight ',mesh.is_watertight)
+        print('volume', mesh.is_volume)
+        #mesh.show()
+        #print(mesh.edges_sorted)
+#    meshes_list.apply_transform(trimesh.transformations.random_rotation_matrix())
 
-# transform method can be passed a (4, 4) matrix and will cleanly apply the transform
+    #meshes.show()
+    #checker = Checker(mesh)
+    #scene = trimesh.Scene(meshes_list)
+    #scene.show()
+
+

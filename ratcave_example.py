@@ -7,13 +7,16 @@ from pyglet.window import key
 window = pyglet.window.Window()
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
-
+pyglet.gl.glClearColor(1,1,1,1)
 
 # Insert filename into WavefrontReader.
 dir = os.path.abspath(os.curdir)
-obj_filename = dir + '/check_mtl_blend.obj'
+#obj_filename = dir + '\Tests\check_mtl_blend.obj'
+obj_filename = dir + '\Tests\check_mtl_blend.obj'
 obj_reader = rc.WavefrontReader(obj_filename)
+map = obj_reader.material_property_map
 print(obj_reader.bodies.keys())
+print(map)
 
 # Create Mesh
 monkey = obj_reader.get_mesh('Cube',position=(0, 0, -1.5), scale=.4)

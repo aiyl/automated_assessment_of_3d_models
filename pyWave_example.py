@@ -15,6 +15,8 @@ box4 = Wavefront(os.path.join(root_path, 'data/box/box-T2F_V3F.obj'))
 box5 = Wavefront(os.path.join(root_path, 'data/box/box-T2F_C3F_V3F.obj'))
 box6 = Wavefront(os.path.join(root_path, 'data/box/box-T2F_N3F_V3F.obj'))
 
+print('Meshes list ',box1.meshes)
+
 rotation = 0.0
 lightfv = ctypes.c_float * 4
 
@@ -38,13 +40,13 @@ def on_draw():
 
     glLightfv(GL_LIGHT0, GL_POSITION, lightfv(-1.0, 1.0, 1.0, 0.0))
 
-    draw_box(box1, -4.0, 2.0)
-    draw_box(box2, 0.0, 2.0)
-    draw_box(box3, 4.0, 2.0)
+#    draw_box(box1, -4.0, 2.0)
+#    draw_box(box2, 0.0, 2.0)
+#    draw_box(box3, 4.0, 2.0)
 
-    draw_box(box4, -4.0, -2.0)
-    draw_box(box5, 0.0, -2.0)
-    draw_box(box6, 4.0, -2.0)
+    draw_box(box4, 0, 0)
+#    draw_box(box5, 0.0, -2.0)
+#    draw_box(box6, 4.0, -2.0)
 
 
 def draw_box(box, x, y):

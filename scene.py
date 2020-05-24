@@ -12,8 +12,8 @@ from pywavefront import visualization
 from pywavefront import Wavefront
 
 # Create absolute path from this module
-file_abspath = os.path.join(os.path.dirname(__file__), 'check1.obj')
-plane_path = os.path.join(os.path.dirname(__file__), 'check4.obj')
+file_abspath = os.path.join(os.path.dirname(__file__)+ '\Tests\check_mtl_blend.obj')
+plane_path = os.path.join(os.path.dirname(__file__), 'Tests/check4.obj')
 rotation = 0.0
 pos =[0, 0, -20]
 mesh = Wavefront(file_abspath)
@@ -24,7 +24,7 @@ material = mesh.materials
 print(mesh.materials)
 
 window = pyglet.window.Window(1024, 720, caption='Demo', resizable=True)
-pyglet.gl.glClearColor(1,1,1,1)
+pyglet.gl.glClearColor(0,0,0,1)
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
 window.push_handlers(pyglet.window.event.WindowEventLogger())
