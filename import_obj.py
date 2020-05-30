@@ -1,15 +1,16 @@
 # parse the file
 import os
+import numpy as np
 
 dir = os.path.abspath(os.curdir)
-obj_filename = dir + '\check1.obj'
+obj_filename = dir + '/check1.obj'
 file = open(obj_filename, 'r')
 polygons = []
 err_face = 0
 all_edges = []
 all_verts = []
 verts_coords = []
-
+normals_coords= []
 
 class Points:
     def __init__(self, point_number, verts_coords):
@@ -18,9 +19,10 @@ class Points:
 
 
 class Polygon:
-    def __init__(self, pol_edges, points):
+    def __init__(self, pol_edges, points, normals):
         self.pol_edges = pol_edges
         self.points = points
+        self.normals = normals
 
 
 def check(edges1, edges2):
@@ -101,18 +103,49 @@ def get_all_edges(all_verts):
 
 def check_adjacency_edge():
     count_adjacency = []
-    i=0
+    err_edge_adjacency = 0
     for i in range(len(all_edges)):
         #print(all_edges[i])
+        count = 0
         for k in range (len(polygons)):
-            count = 0
             for l in range(len(polygons[k].pol_edges)):
-                if check_repeat(all_edges[i], polygons[k].pol_edges):
+                if (polygons[k].pol_edges[l][0] == all_edges[i][0] and polygons[k].pol_edges[l][1] == all_edges[i][1]) or \
+                        (polygons[k].pol_edges[l][1] == all_edges[i][0] and polygons[k].pol_edges[l][0] == all_edges[i][1]):
                     count+=1
         count_adjacency.append(count)
                 #print(polygons[k].pol_edges)
     #print(count)
+    for i in range(len(count_adjacency)):
+        if count_adjacency[i] != 2:
+            err_edge_adjacency += 1
+            print('error! this edge has more or less than 2 adjacency face ', i)
     return count_adjacency
+
+def points_different(p1, p2):
+    vector = []
+    for i in range(len(p1)):
+        vector.append(p2[i] - p1[i])
+    return vector
+
+def vector_multiplication(v1, v2):
+    vector = []
+    vector.append(v1[1] * v2[2] - v1[2] * v2[1])
+    vector.append(v1[2] * v2[0] - v1[0] * v2[2])
+    vector.append(v1[0] * v2[1] - v1[1] * v2[0])
+    return vector
+
+def check_normals(polygon):
+    p0 = np.array([polygon.points.verts_coords[0][0], polygon.points.verts_coords[0][1], polygon.points.verts_coords[0][2]])
+    p1 = np.array([polygon.points.verts_coords[1][0], polygon.points.verts_coords[1][1], polygon.points.verts_coords[1][2]])
+    p2 = np.array([polygon.points.verts_coords[2][0], polygon.points.verts_coords[2][1], polygon.points.verts_coords[2][2]])
+    u = np.array(points_different(p1, p0))
+    v = np.array(points_different(p2, p0))
+    n = vector_multiplication(u,v)
+    print(u, v, n)
+    for i in range(len(polygon.normals.verts_coords)):
+        print('ok')
+   # p1 = np.linspace(polygon.normals.verts_coords[1])
+   # p2 = np.linspace(polygon.normals.verts_coords[2])
 
 if __name__ == '__main__':
     for line in file:
@@ -126,27 +159,38 @@ if __name__ == '__main__':
             list.append(y)
             list.append(z)
             verts_coords.append(list)
-
+        elif words[0] == 'vn':
+            x, y, z = float(words[1]), float(words[2]), float(words[3])
+            list2 = []
+            list2.append(x)
+            list2.append(y)
+            list2.append(z)
+            normals_coords.append(list2)
         elif words[0] == 'f':
             faceVertList = []
+            normal_list = []
             for faceIdx in words[1:]:
                 faceVertList.append(faceIdx)
             if not (len(faceVertList) == 4 or len(faceVertList) == 3):
                 err_face += 1
             faces_verts = []  # индексы вершин грани(ей)
             vertices = []
+            normals = []
             for i in range(len(faceVertList)):
                 faces_verts.append(faceVertList[i].split('/')[0])
+                normal_list.append(faceVertList[i].split('/')[2])
                 vertices.append(verts_coords[int(faces_verts[i]) - 1])
+                normals.append(normals_coords[int(normal_list[i])-1])
             points = Points(faces_verts, vertices)
-            polygon = Polygon(get_edge(faces_verts), points)
+            normal = Points(normal_list, normals)
+            polygon = Polygon(get_edge(faces_verts), points, normal)
             polygons.append(polygon)
     get_all_verts()
     get_all_edges(all_verts)
-
+    check_normals(polygons[0])
     for i in range(len(polygons)):
-        print(i, polygons[i].points.point_number, polygons[i].points.verts_coords, polygons[i].pol_edges)
+        print(i, 'points', polygons[i].points.point_number, 'points coord', polygons[i].points.verts_coords, 'edges', polygons[i].pol_edges, 'normals number', polygons[i].normals.point_number, 'normal coords', polygons[i].normals.verts_coords )
     print('count err face ', err_face)
     print('adj', check_adjacency(polygons))
-    print('adj edge count', check_adjacency_edge())
+    print('adj err_edge count', check_adjacency_edge())
     print('all_edges ', len(all_edges), all_edges)

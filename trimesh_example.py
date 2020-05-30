@@ -13,7 +13,7 @@ class Checker():
         print(mesh)
 
 if __name__ == '__main__':
-    obj = trimesh.load('Tests/separate_face.obj', process=False)
+    obj = trimesh.load('Tests/unnormal.obj', process=False)
     try:
         meshes_list = obj.dump()
         meshes = meshes_list.sum()
@@ -23,8 +23,12 @@ if __name__ == '__main__':
         print('volume', meshes.is_volume)
     except:
         mesh = obj
-        print(mesh.faces)
-        print('broken faces ', trimesh.repair.broken_faces(mesh ))
+     #  print('face_adjacency_edges', mesh.face_adjacency_edges)
+     #  print('face_adjacency', mesh.face_adjacency)
+     #   print('mesh.edges_face', mesh.edges_face)
+        print('adjacency_projections', trimesh.convex.adjacency_projections)
+        print('is convex', trimesh.convex.is_convex(mesh))
+        print('broken faces ', trimesh.repair.broken_faces(mesh))
         #trimesh.repair.fill_holes(mesh)
         print('unnormal normals', trimesh.repair.fix_inversion( mesh , multibody = False ))
         print('winding consistent ',mesh.is_winding_consistent) #winding consistent - непрерывная сетка?
