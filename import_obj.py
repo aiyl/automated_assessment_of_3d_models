@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 dir = os.path.abspath(os.curdir)
-obj_filename = dir + '/check1.obj'
+obj_filename = dir + '/unnormal2.obj'
 file = open(obj_filename, 'r')
 polygons = []
 err_face = 0
@@ -141,9 +141,14 @@ def check_normals(polygon):
     u = np.array(points_different(p1, p0))
     v = np.array(points_different(p2, p0))
     n = vector_multiplication(u,v)
-    print(u, v, n)
+    #n = [-1, -1, -1]
+    #print(u, v, n)
     for i in range(len(polygon.normals.verts_coords)):
-        print('ok')
+        for k in range(len(polygon.normals.verts_coords[0])):
+            if (polygon.normals.verts_coords[0][k] >= 0 and n[k] >= 0) or (polygon.normals.verts_coords[0][k] <= 0 and n[k] <= 0):
+                kl = 0
+            else:
+                print('bad')
    # p1 = np.linspace(polygon.normals.verts_coords[1])
    # p2 = np.linspace(polygon.normals.verts_coords[2])
 
@@ -187,10 +192,11 @@ if __name__ == '__main__':
             polygons.append(polygon)
     get_all_verts()
     get_all_edges(all_verts)
-    check_normals(polygons[0])
     for i in range(len(polygons)):
         print(i, 'points', polygons[i].points.point_number, 'points coord', polygons[i].points.verts_coords, 'edges', polygons[i].pol_edges, 'normals number', polygons[i].normals.point_number, 'normal coords', polygons[i].normals.verts_coords )
     print('count err face ', err_face)
+    for i in range(len(polygons)):
+        check_normals(polygons[i])
     print('adj', check_adjacency(polygons))
     print('adj err_edge count', check_adjacency_edge())
     print('all_edges ', len(all_edges), all_edges)
