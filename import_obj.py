@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 dir = os.path.abspath(os.curdir)
-obj_filename = dir + '/unnormal2.obj'
+obj_filename = dir + '/Tests/unnormal2.obj'
 file = open(obj_filename, 'r')
 polygons = []
 err_face = 0
