@@ -1,7 +1,10 @@
-import re
+import traceback
+
+import main
 fileIsObj = False
 try:
-    handle = open("solve2.obj", "r")
+    file = main.solve
+    handle = open(file, "r")
     while True:
         data = handle.read(512)
         c = data.find("vt")
@@ -10,8 +13,6 @@ try:
             break
         if not data:
             break
-except Exception:
-    fileIsObj = False
-finally:
     handle.close()
-    print(fileIsObj)
+except Exception:
+    print('File has to be obj format:\n', traceback.format_exc())

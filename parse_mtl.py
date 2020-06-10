@@ -1,7 +1,5 @@
 import traceback
 
-import skimage
-from skimage import io, color
 #path1 - эталон path2 - решение участника
 class Material_properties:
     def __init__(self, material_name, diffuse_color):
@@ -41,5 +39,3 @@ class Mtl:
 """
         except Exception as e:
             print('File mtl and file obj must match! file must be named:\n'+ mtl1.split('/')[2], traceback.format_exc())
-
-
