@@ -1,9 +1,7 @@
 import numpy as np
 import trimesh
 import pyglet
-from csg.core import CSG
 from pyglet.gl import *
-import glooey
 from trimesh import Trimesh
 from trimesh.viewer import windowed, SceneViewer
 
@@ -37,8 +35,8 @@ if __name__ == '__main__':
 
         scene = mesh.scene()
         rotate = trimesh.transformations.rotation_matrix(
-            angle=np.radians(10.0),
-            direction=[0, 1, 0],
+            angle=25,
+            direction=[0, 0, 5],
             point=scene.centroid)
 
         for i in range(4):
