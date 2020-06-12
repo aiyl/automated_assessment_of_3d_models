@@ -3,11 +3,12 @@ import os
 import numpy as np
 
 dir = os.path.abspath(os.curdir)
-obj_filename = dir + '/Tests/unnormal_box.obj'
+obj_filename = dir + '/Tests/isbaForBlend.obj'
 file = open(obj_filename, 'r')
 polygons = []
 err_face = 0
 all_edges = []
+all_verts2 = []
 all_verts = []
 verts_coords = []
 normals_coords= []
@@ -118,8 +119,9 @@ def check_adjacency_edge():
     for i in range(len(count_adjacency)):
         if count_adjacency[i] != 2:
             err_edge_adjacency += 1
+
             print('error! this edge has more or less than 2 adjacency face ', i)
-    return count_adjacency
+    return err_edge_adjacency
 
 def points_different(p1, p2):
     vector = []
@@ -164,6 +166,7 @@ if __name__ == '__main__':
             list.append(y)
             list.append(z)
             verts_coords.append(list)
+            all_verts2.append(list)
         elif words[0] == 'vn':
             x, y, z = float(words[1]), float(words[2]), float(words[3])
             list2 = []
@@ -195,8 +198,8 @@ if __name__ == '__main__':
     for i in range(len(polygons)):
         print(i, 'points', polygons[i].points.point_number, 'points coord', polygons[i].points.verts_coords, 'edges', polygons[i].pol_edges, 'normals number', polygons[i].normals.point_number, 'normal coords', polygons[i].normals.verts_coords )
     print('count err face ', err_face)
-    for i in range(len(polygons)):
-        check_normals(polygons[i])
+    #for i in range(len(polygons)):
+        #check_normals(polygons[i])
     print('adj', check_adjacency(polygons))
     print('adj err_edge count', check_adjacency_edge())
-    print('all_edges ', len(all_edges), all_edges)
+    print('all_edges ', len(all_edges), 'all verts', len(all_verts2), 'polygons', len(polygons))

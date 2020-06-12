@@ -12,6 +12,7 @@ class Mtl:
     material_name = ''
     def __init__(self, path):
         self.file1 = path
+        self.parseMtl()
     def parseMtl(self):
         materials = []
         file = self.file1

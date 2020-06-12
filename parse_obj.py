@@ -6,12 +6,13 @@ class Points:
 
 
 class Polygon:
-    def __init__(self, pol_edges, points, normals):
+    def __init__(self, pol_edges, points, normals, number):
         self.pol_edges = pol_edges
         self.points = points
         self.normals = normals
+        self.number = number
 
-class obj:
+class Obj:
     polygons = []
     err_face = 0
     all_edges = []
@@ -20,6 +21,7 @@ class obj:
     normals_coords = []
     def __init__(self, file):
         self.file = file
+        self.parse()
 
     def get_all_verts(self):
         for i in range(len(self.polygons)):
@@ -62,6 +64,7 @@ class obj:
         return edges
 
     def parse(self):
+        number = 0
         try:
             file = open(self.file, 'r')
             for line in file:
@@ -83,6 +86,7 @@ class obj:
                     list2.append(z)
                     self.normals_coords.append(list2)
                 elif words[0] == 'f':
+                    number += 1
                     faceVertList = []
                     normal_list = []
                     for faceIdx in words[1:]:
@@ -99,10 +103,10 @@ class obj:
                         normals.append(self.normals_coords[int(normal_list[i]) - 1])
                     points = Points(faces_verts, vertices)
                     normal = Points(normal_list, normals)
-                    polygon = Polygon(self.get_edge(faces_verts), points, normal)
+                    polygon = Polygon(self.get_edge(faces_verts), points, normal, number)
                     self.polygons.append(polygon)
-                    self.get_all_verts()
-                    self.get_all_edges(self.all_verts)
-
+            file.close()
+            self.get_all_verts()
+            self.get_all_edges(self.all_verts)
         except Exception as e:
             print('Error format! File has to be obj:\n', traceback.format_exc())
