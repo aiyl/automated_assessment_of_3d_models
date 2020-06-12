@@ -40,7 +40,7 @@ class Checker:
     def pointer(self):
         check_names = self.check_names()
         if len(check_names) != 0:
-            print(check_names)
+            print('need_material', check_names)
         self.maxPoint = len(self.reference.materials)*10
         points = (self.points*10)/self.maxPoint
         return int(points)

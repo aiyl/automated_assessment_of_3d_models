@@ -6,19 +6,19 @@ import check_obj
 
 dir = os.path.abspath(os.curdir)
 reference = dir + '/Tests/check1.obj'
-solve = dir + '/Tests/separate_edges_face.obj'
+solve = dir + '/Tests/check2.obj'
 
 if __name__ == '__main__':
     #check material
     mtl1 = parse_mtl.Mtl(reference)
     mtl2 = parse_mtl.Mtl(solve)
     checker = check_materials.Checker(mtl1, mtl2)
-    print('points', checker.pointer())
+    print('material points', checker.pointer())
     #check obj
     obj = parse_obj.Obj(solve)
     check_obj = check_obj.Check(obj)
 
-    print('separate face', check_obj.sep_face_count, 'separate_edge', check_obj.sep_edge_count)
+    print('separate face', check_obj.sep_face_count, 'separate_edge', check_obj.sep_edge_count,'multiply_connected_geometry', check_obj.multiply_connected_geometry)
 
     
 

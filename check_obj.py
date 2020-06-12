@@ -5,9 +5,9 @@ class Adjacency:
 
 class Check:
     sep_edges_list = []
-    err_edges_list = []
     sep_face_count = 0
     sep_edge_count = 0
+    multiply_connected_geometry = 0
 
     def __init__(self, obj):
         self.obj = obj
@@ -32,7 +32,11 @@ class Check:
                 adj = Adjacency(polygons[k], polygons[k].pol_edges[l])
                 self.sep_edges_list.append(adj)
                 self.check_separate_face(self.sep_edges_list)
-            count_adjacency.append(count)
+            #count_adjacency.append(count)
+
+            if count > 2:
+                self.multiply_connected_geometry += 1
+
 
     def check_separate_face(self, adjacency_edges):
        count = 0
@@ -45,3 +49,6 @@ class Check:
                k +=1
        if count == 4:
            self.sep_face_count += 1
+
+
+

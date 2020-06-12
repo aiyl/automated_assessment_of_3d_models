@@ -6,10 +6,11 @@ class Points:
 
 
 class Polygon:
-    def __init__(self, pol_edges, points, normals, number):
+    def __init__(self, pol_edges, points, normals, uv, number):
         self.pol_edges = pol_edges
         self.points = points
         self.normals = normals
+        self.uv = uv
         self.number = number
 
 class Obj:
@@ -19,6 +20,7 @@ class Obj:
     all_verts = []
     verts_coords = []
     normals_coords = []
+    uv_coords = []
     def __init__(self, file):
         self.file = file
         self.parse()
@@ -63,6 +65,20 @@ class Obj:
             edges.append(list3)
         return edges
 
+    def create_coords_list(self, words, vert_coords_len):
+        list = []
+        if vert_coords_len == 3:
+            x, y, z = float(words[1]), float(words[2]), float(words[3])
+            list.append(x)
+            list.append(y)
+            list.append(z)
+            return list
+        else:
+            x,y = float(words[1]), float(words[2])
+            list.append(x)
+            list.append(x)
+            return list
+
     def parse(self):
         number = 0
         try:
@@ -72,23 +88,19 @@ class Obj:
                 if len(words) == 0 or words[0].startswith('#'):
                     pass
                 elif words[0] == 'v':
-                    x, y, z = float(words[1]), float(words[2]), float(words[3])
-                    list = []
-                    list.append(x)
-                    list.append(y)
-                    list.append(z)
+                    list = self.create_coords_list(words, 3)
                     self.verts_coords.append(list)
+                elif words[0] == 'vt':
+                    list = self.create_coords_list(words, 2)
+                    self.uv_coords.append(list)
                 elif words[0] == 'vn':
-                    x, y, z = float(words[1]), float(words[2]), float(words[3])
-                    list2 = []
-                    list2.append(x)
-                    list2.append(y)
-                    list2.append(z)
-                    self.normals_coords.append(list2)
+                    list = self.create_coords_list(words, 3)
+                    self.normals_coords.append(list)
                 elif words[0] == 'f':
                     number += 1
                     faceVertList = []
                     normal_list = []
+                    uv_list = []
                     for faceIdx in words[1:]:
                         faceVertList.append(faceIdx)
                     if not (len(faceVertList) == 4 or len(faceVertList) == 3):
@@ -96,14 +108,18 @@ class Obj:
                     faces_verts = []  # индексы вершин грани(ей)
                     vertices = []
                     normals = []
+                    uvs = []
                     for i in range(len(faceVertList)):
                         faces_verts.append(faceVertList[i].split('/')[0])
+                        uv_list.append(faceVertList[i].split('/')[1])
                         normal_list.append(faceVertList[i].split('/')[2])
                         vertices.append(self.verts_coords[int(faces_verts[i]) - 1])
+                        uvs.append(self.uv_coords[int(uv_list[i]) - 1])
                         normals.append(self.normals_coords[int(normal_list[i]) - 1])
                     points = Points(faces_verts, vertices)
+                    uv = Points(uv_list, uvs)
                     normal = Points(normal_list, normals)
-                    polygon = Polygon(self.get_edge(faces_verts), points, normal, number)
+                    polygon = Polygon(self.get_edge(faces_verts), points, normal, uv, number)
                     self.polygons.append(polygon)
             file.close()
             self.get_all_verts()
