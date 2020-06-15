@@ -6,11 +6,12 @@ class Points:
 
 
 class Polygon:
-    def __init__(self, pol_edges, points, normals, uv, number):
+    def __init__(self, pol_edges, points, normals, uv_verts, uv_edges, number):
         self.pol_edges = pol_edges
         self.points = points
         self.normals = normals
-        self.uv = uv
+        self.uv_verts = uv_verts
+        self.uv_edges = uv_edges
         self.number = number
 
 class Obj:
@@ -76,7 +77,7 @@ class Obj:
         else:
             x,y = float(words[1]), float(words[2])
             list.append(x)
-            list.append(x)
+            list.append(y)
             return list
 
     def parse(self):
@@ -119,7 +120,7 @@ class Obj:
                     points = Points(faces_verts, vertices)
                     uv = Points(uv_list, uvs)
                     normal = Points(normal_list, normals)
-                    polygon = Polygon(self.get_edge(faces_verts), points, normal, uv, number)
+                    polygon = Polygon(self.get_edge(faces_verts), points, normal, uv, self.get_edge(uv_list), number)
                     self.polygons.append(polygon)
             file.close()
             self.get_all_verts()
