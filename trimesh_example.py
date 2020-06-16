@@ -11,7 +11,7 @@ class Checker():
         print(mesh)
 
 if __name__ == '__main__':
-    obj = trimesh.load('Tests/lego_character.obj', process=False)
+    obj = trimesh.load('Tests/check1.obj', process=False)
     try:
         meshes_list = obj.dump()
         meshes = meshes_list.sum()

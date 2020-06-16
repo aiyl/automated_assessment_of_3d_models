@@ -37,7 +37,6 @@ class Check:
             if count > 2:
                 self.multiply_connected_geometry += 1
 
-
     def check_separate_face(self, adjacency_edges):
        count = 0
        for i in range(len(adjacency_edges)):
