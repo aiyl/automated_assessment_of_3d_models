@@ -4,7 +4,6 @@ class Points:
         self.point_number = point_number
         self.verts_coords = verts_coords
 
-
 class Polygon:
     def __init__(self, pol_edges, points, normals, uv_verts, uv_edges, number):
         self.pol_edges = pol_edges
@@ -17,8 +16,10 @@ class Polygon:
 class Obj:
     polygons = []
     err_face = 0
+    all_uv_edge = []
     all_edges = []
     all_verts = []
+    all_uv_verts = []
     verts_coords = []
     normals_coords = []
     uv_coords = []
@@ -26,9 +27,14 @@ class Obj:
         self.file = file
         self.parse()
 
-    def get_all_verts(self):
+    def get_all_verts(self, args):
+        all_verts = []
         for i in range(len(self.polygons)):
-            self.all_verts.append(self.polygons[i].points.point_number)
+            if args == 'pol':
+                all_verts.append(self.polygons[i].points.point_number)
+            else:
+                all_verts.append(self.polygons[i].uv_verts.point_number)
+        return all_verts
 
     def check_repeat(self, list, list2):
         boolean = True
@@ -40,6 +46,7 @@ class Obj:
         return boolean
 
     def get_all_edges(self, all_verts):
+        all_edges = []
         for n in range(len(all_verts)):
             for m in range(len(all_verts[n])):
                 list3 = []
@@ -50,8 +57,9 @@ class Obj:
                     list3.append(all_verts[n][m])
                     list3.append(all_verts[n][m + 1])
                     # edge = Edge(faces_verts[n][m], faces_verts[n][m+1])
-                if self.check_repeat(list3, self.all_edges) or len(self.all_edges) == 0:
-                    self.all_edges.append(list3)
+                if self.check_repeat(list3, all_edges) or len(all_edges) == 0:
+                    all_edges.append(list3)
+        return all_edges
 
     def get_edge(self, faces_verts):
         edges = []
@@ -64,6 +72,7 @@ class Obj:
                 list3.append(faces_verts[m])
                 list3.append(faces_verts[m + 1])
             edges.append(list3)
+
         return edges
 
     def create_coords_list(self, words, vert_coords_len):
@@ -123,7 +132,9 @@ class Obj:
                     polygon = Polygon(self.get_edge(faces_verts), points, normal, uv, self.get_edge(uv_list), number)
                     self.polygons.append(polygon)
             file.close()
-            self.get_all_verts()
-            self.get_all_edges(self.all_verts)
+            self.all_verts = self.get_all_verts('pol')
+            self.all_uv_verts = self.get_all_verts('uv')
+            self.all_edges = self.get_all_edges(self.all_verts)
+            self.all_uv_edge = self.get_all_edges(self.all_uv_verts)
         except Exception as e:
             print('Error format! File has to be obj:\n', traceback.format_exc())
