@@ -137,9 +137,7 @@ def vector_multiplication(v1, v2):
     return vector
 
 def check_normals(polygon):
-    p0 = np.array([polygon.points.verts_coords[0][0], polygon.points.verts_coords[0][1], polygon.points.verts_coords[0][2]])
-    p1 = np.array([polygon.points.verts_coords[1][0], polygon.points.verts_coords[1][1], polygon.points.verts_coords[1][2]])
-    p2 = np.array([polygon.points.verts_coords[2][0], polygon.points.verts_coords[2][1], polygon.points.verts_coords[2][2]])
+
     u = np.array(points_different(p1, p0))
     v = np.array(points_different(p2, p0))
     n = vector_multiplication(u,v)

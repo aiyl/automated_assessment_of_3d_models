@@ -1,11 +1,10 @@
 import numpy as np
-import shapely
-from shapely.geometry import Polygon
 class Check_UV:
     polygon_areas = 0
     uv_map_edge = 1
     uv_map_area = 1
     percent_busy = 0
+    uv_intersection = 0
     def __init__(self, polygons, uv_coords, all_uv_edges):
         self.polygons = polygons
         self.uv_coords = uv_coords
@@ -40,11 +39,12 @@ class Check_UV:
 
     def check_cross(self):
         integrity = []
-        #координаты концов первого отрезка
+
         for i in range(len(self.uv_edges)):
             k = 0
             x1_1 = self.uv_coords[int(self.uv_edges[i][0]) - 1][0]
             y1_1 = self.uv_coords[int(self.uv_edges[i][0]) - 1][1]
+
             x1_2 = self.uv_coords[int(self.uv_edges[i][1]) - 1][0]
             y1_2 = self.uv_coords[int(self.uv_edges[i][1]) - 1][1]
             while k < len(self.uv_edges)-1:
@@ -55,13 +55,13 @@ class Check_UV:
                 y2_1 = self.uv_coords[int(self.uv_edges[k][0]) - 1][1]
                 x2_2 = self.uv_coords[int(self.uv_edges[k][1]) - 1][0]
                 y2_2 = self.uv_coords[int(self.uv_edges[k][1]) - 1][1]
-                A1 = y1_1 - y1_2
+
+                """A1 = y1_1 - y1_2
                 B1 = x1_2 - x1_1
                 C1 = x1_1 * y1_2 - x1_2 * y1_1
                 A2 = y2_1 - y2_2
                 B2 = x2_2 - x2_1
                 C2 = x2_1 * y2_2 - x2_2 * y2_1
-                # решаем систему двух уравнений
                 if B1 * A2 - B2 * A1 != 0 and A1!=0:
                     y = (C2 * A1 - C1 * A2) / (B1 * A2 - B2 * A1)
                     x = (-C1 - B1 * y) / A1
@@ -70,17 +70,16 @@ class Check_UV:
                         list = [round(x, 6), round(y, 6)]
                         if not list in self.uv_coords and not list in integrity :
                             integrity.append(list)
-                            print('Точка пересечения отрезков есть, координаты: ({0:f}, {1:f}).'.
-                                  format(x, y), '1 otrez', x1_1, y1_1, x1_2, y1_2, '2otrez', x2_1, y2_1, x2_2, y2_2 )
-
-
+                            #print('Точка пересечения отрезков есть, координаты: ({0:f}, {1:f}).'.
+                            #      format(x, y), '1 otrez', x1_1, y1_1, x1_2, y1_2, '2otrez', x2_1, y2_1, x2_2, y2_2 )
+                            self.uv_intersection += 1
                 k += 1
-
-
+"""
 
     def check_uv(self):
-        for i in range(len(self.polygons)):
-            self.uv_areas(self.polygons[i])
-        self.percent_busy = int(round(self.polygon_areas*100/self.uv_map_area))
         self.check_cross()
+        if self.uv_intersection == 0:
+            for i in range(len(self.polygons)):
+                self.uv_areas(self.polygons[i])
+            self.percent_busy = int(round(self.polygon_areas * 100 / self.uv_map_area))
 

@@ -1,0 +1,10 @@
+
+__pycache__/check_materials.cpython-37.pyc
+.idea/automated_assessment_of_3d_models.iml
+.idea/misc.xml
+.idea/modules.xml
+*.xml
+*.pyc
+*.pyc
+__pycache__/check_format.cpython-37.pyc
+__pycache__/parse_obj.cpython-37.pyc
