@@ -8,8 +8,8 @@ import check_obj
 import check_uv
 
 dir = os.path.abspath(os.curdir)
-reference = dir + '/Tests/check1.obj'
-solve = dir + '/Tests/check_uv4.obj'
+reference = dir + '/Tests/unnormal_box.obj'
+solve = dir + '/Tests/check_uv2.obj'
 
 def get_renders(file_path, obj_type):
     obj = trimesh.load(file_path, process=False)

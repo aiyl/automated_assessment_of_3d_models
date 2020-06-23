@@ -1,4 +1,5 @@
 import numpy as np
+import math
 class Check_UV:
     polygon_areas = 0
     uv_map_edge = 1
@@ -36,6 +37,18 @@ class Check_UV:
             self.polygon_areas += n
         self.uv_map_area = self.uv_map_edge*self.uv_map_edge
 
+    def unit_vector(self, vector):
+        """ Returns the unit vector of the vector.  """
+        return vector / np.linalg.norm(vector)
+
+    def angle_between(self, v1, v2):
+        v1_u = self.unit_vector(v1)
+        v2_u = self.unit_vector(v2)
+        return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
+
+    def distance(self,x1,y1,x2,y2):
+        return math.hypot(x2-x1, y2-y1)
+
 
     def check_cross(self):
         integrity = []
@@ -44,9 +57,10 @@ class Check_UV:
             k = 0
             x1_1 = self.uv_coords[int(self.uv_edges[i][0]) - 1][0]
             y1_1 = self.uv_coords[int(self.uv_edges[i][0]) - 1][1]
-
+            A = [x1_1, y1_1]
             x1_2 = self.uv_coords[int(self.uv_edges[i][1]) - 1][0]
             y1_2 = self.uv_coords[int(self.uv_edges[i][1]) - 1][1]
+            B = [x1_2, y1_2]
             while k < len(self.uv_edges)-1:
                 if k == i:
                     k += 1
@@ -55,8 +69,33 @@ class Check_UV:
                 y2_1 = self.uv_coords[int(self.uv_edges[k][0]) - 1][1]
                 x2_2 = self.uv_coords[int(self.uv_edges[k][1]) - 1][0]
                 y2_2 = self.uv_coords[int(self.uv_edges[k][1]) - 1][1]
+                C = [x2_1, y2_1]
+                D = [x2_2, y2_2]
+                AB = self.points_different(A,B)
+                AC = self.points_different(A,C)
+                angleA = self.angle_between(AB, AC)
+                CD = self.points_different(C,D)
+                angle = self.angle_between(AB, CD)
+                print(angle)
+                AD = self.points_different(A, D)
+                angleB = self.angle_between(AB, AD)
+                distanceAB = self.distance(A[0], A[1], B[0], B[1])
+                distanceAC = self.distance(A[0], A[1], C[0], C[1])
+                distanceAD = self.distance(A[0], A[1], D[0], D[1])
+                z1 = round(distanceAB*distanceAC*math.sin(angleA), 6)
+                z2 = round(distanceAB*distanceAD*math.sin(angleB), 6)
+                divider = abs(z2-z1)
+                if divider!=0 and not math.isnan(divider) and z1*z2>0 and round(angle,4) != 1.5708:
+                    Px = C[0]+(D[0]-C[0])*abs(z1)/divider
+                    Py = C[1] + (D[1] - C[1]) * abs(z1) /divider
+                    list = [round(Px, 6), round(Py, 6)]
+                    if not list in self.uv_coords and not list in integrity:
+                        integrity.append(list)
 
-                """A1 = y1_1 - y1_2
+                k+=1
+        print('integrity', len(integrity))
+        """
+                A1 = y1_1 - y1_2
                 B1 = x1_2 - x1_1
                 C1 = x1_1 * y1_2 - x1_2 * y1_1
                 A2 = y2_1 - y2_2
@@ -78,8 +117,8 @@ class Check_UV:
 
     def check_uv(self):
         self.check_cross()
-        if self.uv_intersection == 0:
-            for i in range(len(self.polygons)):
-                self.uv_areas(self.polygons[i])
-            self.percent_busy = int(round(self.polygon_areas * 100 / self.uv_map_area))
+       # if self.uv_intersection == 0:
+        #    for i in range(len(self.polygons)):
+         #       self.uv_areas(self.polygons[i])
+          #  self.percent_busy = int(round(self.polygon_areas * 100 / self.uv_map_area))
 
