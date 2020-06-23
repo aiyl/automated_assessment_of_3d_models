@@ -9,7 +9,7 @@ import check_uv
 
 dir = os.path.abspath(os.curdir)
 reference = dir + '/Tests/unnormal_box.obj'
-solve = dir + '/Tests/check_uv2.obj'
+solve = dir + '/Tests/lego_character.obj'
 
 def get_renders(file_path, obj_type):
     obj = trimesh.load(file_path, process=False)
