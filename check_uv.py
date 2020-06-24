@@ -1,3 +1,5 @@
+import timeit
+
 import numpy as np
 import math
 class Check_UV:
@@ -12,30 +14,21 @@ class Check_UV:
         self.uv_edges = all_uv_edges
         self.check_uv()
 
-    def points_different(self, p1, p2):
-        vector = []
-        for i in range(len(p1)):
-            vector.append(p2[i] - p1[i])
-        return vector
-
-    def vector_multiplication(self, v1, v2):
-        vector = v1[0] * v2[1] - v1[1] * v2[0]
-        return vector
+    def polygon_area(self, x, y):
+        correction = x[-1] * y[0] - y[-1] * x[0]
+        main_area = np.dot(x[:-1], y[1:]) - np.dot(y[:-1], x[1:])
+        return 0.5 * np.abs(main_area + correction)
 
     def uv_areas(self, polygon):
-        max_edge = 1
-        for i in range(len(polygon.uv_verts.verts_coords) - 2):
-            p0 = np.array([polygon.uv_verts.verts_coords[i][0], polygon.uv_verts.verts_coords[i][1]])
-            p1 = np.array([polygon.uv_verts.verts_coords[i+1][0], polygon.uv_verts.verts_coords[i+1][1]])
-            p2 = np.array([polygon.uv_verts.verts_coords[i+2][0], polygon.uv_verts.verts_coords[i+2][1]])
-            max_edge = max(p0.max(), p1.max(), p2.max())
-            if self.uv_map_edge < max_edge:
-                self.uv_map_edge = int(str(max_edge).split('.')[0]) + 1
-            u = self.points_different(p1, p0)
-            v = self.points_different(p2, p0)
-            n = abs(self.vector_multiplication(u, v) /2)
-            self.polygon_areas += n
-        self.uv_map_area = self.uv_map_edge*self.uv_map_edge
+        x = np.array([])
+        y = np.array([])
+        for i in range(len(polygon.uv_verts.verts_coords)):
+
+            x = np.append(x, polygon.uv_verts.verts_coords[i][0])
+            y = np.append(y, polygon.uv_verts.verts_coords[i][1])
+
+        self.polygon_areas += self.polygon_area(x,y)
+        return self.polygon_area(x,y)
 
     def unit_vector(self, vector):
         """ Returns the unit vector of the vector.  """
@@ -56,11 +49,6 @@ class Check_UV:
         return False
 
     def orientation(self, p, q, r):
-        # to find the orientation of an ordered triplet (p,q,r)
-        # function returns the following values:
-        # 0 : Colinear points
-        # 1 : Clockwise points
-        # 2 : Counterclockwise
         val = (float(q[1] - p[1]) * (r[0] - q[0])) - (float(q[0] - p[0]) * (r[1] - q[1]))
         if (val > 0):
 
@@ -132,9 +120,9 @@ class Check_UV:
 
 
     def check_uv(self):
-        self.check_cross()
+        #self.check_cross()
        # if self.uv_intersection == 0:
-        #    for i in range(len(self.polygons)):
-         #       self.uv_areas(self.polygons[i])
+        for i in range(len(self.polygons)):
+            self.uv_areas(self.polygons[i])
           #  self.percent_busy = int(round(self.polygon_areas * 100 / self.uv_map_area))
 
