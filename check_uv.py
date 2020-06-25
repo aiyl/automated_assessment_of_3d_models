@@ -120,9 +120,9 @@ class Check_UV:
 
 
     def check_uv(self):
-        #self.check_cross()
-       # if self.uv_intersection == 0:
-        for i in range(len(self.polygons)):
-            self.uv_areas(self.polygons[i])
-          #  self.percent_busy = int(round(self.polygon_areas * 100 / self.uv_map_area))
+        self.check_cross()
+        if self.uv_intersection == 0:
+            for i in range(len(self.polygons)):
+                self.uv_areas(self.polygons[i])
+            self.percent_busy = int(round(self.polygon_areas * 100 / self.uv_map_area))
 

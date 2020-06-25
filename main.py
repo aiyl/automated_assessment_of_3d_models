@@ -6,13 +6,13 @@ import check_materials
 import parse_obj
 import check_obj
 import check_uv
-
+from PIL import Image
 dir = os.path.abspath(os.curdir)
 reference = dir + '/Tests/unnormal_box2.obj'
-solve = dir + '/Tests/unnormal_box4.obj'
+solve = dir + '/Tests/check_double.obj'
 
 def get_renders(file_path, obj_type):
-    obj = trimesh.load(file_path, process=False)
+    obj = trimesh.load(file_path, process = False)
     try:
         meshes_list = obj.dump()
         scene = trimesh.Scene(meshes_list)
@@ -50,17 +50,15 @@ if __name__ == '__main__':
     mtl1 = parse_mtl.Mtl(reference)
     mtl2 = parse_mtl.Mtl(solve)
     checker = check_materials.Checker(mtl1, mtl2)
-
     print('material points', checker.pointer())
+
     #check obj
     obj = parse_obj.Obj(solve)
     check_obj = check_obj.Check(obj)
+    print('separate face', check_obj.sep_face_count, 'separate_edge', check_obj.sep_edge_count,'multiply_connected_geometry',
+          check_obj.multiply_connected_geometry, 'double vertices', len(obj.double_vertices), 'err_face', obj.err_face)
+
+    #check_uv
 
     check_uv = check_uv.Check_UV(obj.polygons, obj.uv_coords, obj.all_uv_edge)
     print('uv_intersection', check_uv.uv_intersection, 'percent_busy', check_uv.percent_busy, ' area', check_uv.polygon_areas)
-    print('separate face', check_obj.sep_face_count, 'separate_edge', check_obj.sep_edge_count,'multiply_connected_geometry', check_obj.multiply_connected_geometry)
-
-"""    for i in range(len(mtl1.materials)):
-        print('mat1', mtl1.materials[i].material_name, mtl1.materials[i].diffuse_color )
-    for i in range(len(mtl2.materials)):
-        print('mat2', mtl2.materials[i].material_name, mtl2.materials[i].diffuse_color) """

@@ -23,6 +23,7 @@ class Obj:
     verts_coords = []
     normals_coords = []
     uv_coords = []
+    double_vertices = []
     def __init__(self, file):
         self.file = file
         self.parse()
@@ -99,6 +100,10 @@ class Obj:
                     pass
                 elif words[0] == 'v':
                     list = self.create_coords_list(words, 3)
+                    for i in range(len(self.verts_coords)):
+                        if [round(list[0], 3), round(list[1], 3), round(list[2], 3)] \
+                                == [round(self.verts_coords[i][0], 3), round(self.verts_coords[i][1], 3), round(self.verts_coords[i][2], 3)]:
+                            self.double_vertices.append(list)
                     self.verts_coords.append(list)
                 elif words[0] == 'vt':
                     list = self.create_coords_list(words, 2)
