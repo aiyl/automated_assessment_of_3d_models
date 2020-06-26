@@ -118,7 +118,7 @@ class Obj:
                     uv_list = []
                     for faceIdx in words[1:]:
                         faceVertList.append(faceIdx)
-                    if not (len(faceVertList) == 4 or len(faceVertList) == 3):
+                    if  len(faceVertList)!=4 and len(faceVertList)!=3:
                         self.err_face += 1
                     faces_verts = []  # индексы вершин грани(ей)
                     vertices = []

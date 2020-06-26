@@ -2,6 +2,8 @@ import timeit
 
 import numpy as np
 import math
+import shapely
+from shapely.geometry import Polygon
 class Check_UV:
     polygon_areas = 0
     uv_map_edge = 1
@@ -29,6 +31,22 @@ class Check_UV:
 
         self.polygon_areas += self.polygon_area(x,y)
         return self.polygon_area(x,y)
+
+    def check_polygon_cross(self):
+        try:
+            for i  in range(len(self.polygons)):
+                pol1 = Polygon(self.polygons[i].uv_verts.verts_coords)
+                for k in range(len(self.polygons)-1):
+                    if k==i:
+                        k += 1
+                    pol2 = Polygon(self.polygons[k].uv_verts.verts_coords)
+                    inter = pol1.intersection(pol2)
+                    if inter.geom_type == 'Polygon' and inter.wkt != 'POLYGON EMPTY':
+                        return False
+        except:
+            return False
+
+        return True
 
     def unit_vector(self, vector):
         """ Returns the unit vector of the vector.  """
@@ -120,9 +138,9 @@ class Check_UV:
 
 
     def check_uv(self):
-        self.check_cross()
-        if self.uv_intersection == 0:
+        if self.check_polygon_cross():
             for i in range(len(self.polygons)):
                 self.uv_areas(self.polygons[i])
             self.percent_busy = int(round(self.polygon_areas * 100 / self.uv_map_area))
+
 
