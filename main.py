@@ -9,7 +9,7 @@ import check_uv
 import check_renders
 dir = os.path.abspath(os.curdir)
 reference = dir + '/Tests/check1.obj'
-solve = dir + '/Tests/check2.obj'
+solve = dir + '/Tests/check_area2.obj'
 
 def get_renders(file_path, obj_type):
     renders = []
@@ -64,4 +64,4 @@ if __name__ == '__main__':
     #check_uv
 
     check_uv = check_uv.Check_UV(obj.polygons, obj.uv_coords, obj.all_uv_edge)
-    print('uv_intersection', check_uv.uv_intersection, 'percent_busy', check_uv.percent_busy, ' area', check_uv.polygon_areas)
+    print( 'percent_busy', check_uv.percent_busy, ' area', check_uv.polygon_areas)

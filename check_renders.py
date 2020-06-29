@@ -26,7 +26,7 @@ class Check_renders:
 		verh = 100 * self.points
 		niz = maxPoint*len(imgAns)*10
 		dif =int( verh/niz)
-		self.all_points = 10 - dif
+		self.all_points = dif
 
 	def mse(self, imageA, imageB):
 		err = np.sum((imageA.astype("float") - imageB.astype("float")) ** 2)

@@ -1,9 +1,12 @@
 # parse the file
 import os
+from functools import reduce
+
+import math
 import numpy as np
 
 dir = os.path.abspath(os.curdir)
-obj_filename = dir + '/Tests/isbaForBlend.obj'
+obj_filename = dir + '/Tests/check1.obj'
 file = open(obj_filename, 'r')
 polygons = []
 err_face = 0
@@ -12,6 +15,7 @@ all_verts2 = []
 all_verts = []
 verts_coords = []
 normals_coords= []
+count = 0
 
 class Points:
     def __init__(self, point_number, verts_coords):
@@ -135,20 +139,41 @@ def vector_multiplication(v1, v2):
     vector.append(v1[2] * v2[0] - v1[0] * v2[2])
     vector.append(v1[0] * v2[1] - v1[1] * v2[0])
     return vector
+def add_vectors(v, w):
+    return [vi - wi for vi, wi in zip(v, w)]
+def sum_vectors(v, w):
+    return [vi - wi for vi, wi in zip(v, w)]
 
-def check_normals(polygon):
+def sum_of_all_vectors(vecs):
+    return reduce(sum_vectors, vecs)
 
-    u = np.array(points_different(p1, p0))
-    v = np.array(points_different(p2, p0))
-    n = vector_multiplication(u,v)
-    #n = [-1, -1, -1]
-    #print(u, v, n)
-    for i in range(len(polygon.normals.verts_coords)):
-        for k in range(len(polygon.normals.verts_coords[0])):
-            if (polygon.normals.verts_coords[0][k] >= 0 and n[k] >= 0) or (polygon.normals.verts_coords[0][k] <= 0 and n[k] <= 0):
-                kl = 0
-            else:
-                print('bad')
+def check_normals(polygon, number):
+    p = []
+    #print('pol number', number)
+    for i in range(len(polygon.points.verts_coords)):
+        p.append(polygon.points.verts_coords[i])
+    b = np.array(points_different([0, 0, 0], p[0]))
+    a = np.array(points_different([0, 0, 0], p[1]))
+    c = np.array(points_different([0, 0, 0], p[2]))
+    x = add_vectors(b, a)
+    y = add_vectors(c, a)
+    N = vector_multiplication(x, y)
+    lol = float(N[0]*N[0] + N[1]*N[1]+ N[2]*N[2])
+    delitel = math.sqrt(lol)
+    sum = sum_of_all_vectors(polygon.normals.verts_coords)
+    #print('sum', sum)
+    string = str(polygon.normals.verts_coords[0][0]).split('.')[1]
+    round = len(string)
+    for i in range(len(N)):
+        N[i] = N[i]/delitel
+        N[i] = np.round(N[i], round)
+    for k in range(len(polygon.normals.verts_coords)):
+        if N!=polygon.normals.verts_coords[k]:
+            print('bad')
+            print('has to be', N, 'real', polygon.normals.verts_coords[k])
+        else:
+            print('good')
+
    # p1 = np.linspace(polygon.normals.verts_coords[1])
    # p2 = np.linspace(polygon.normals.verts_coords[2])
 
@@ -196,8 +221,8 @@ if __name__ == '__main__':
     for i in range(len(polygons)):
         print(i, 'points', polygons[i].points.point_number, 'points coord', polygons[i].points.verts_coords, 'edges', polygons[i].pol_edges, 'normals number', polygons[i].normals.point_number, 'normal coords', polygons[i].normals.verts_coords )
     print('count err face ', err_face)
-    #for i in range(len(polygons)):
-        #check_normals(polygons[i])
+    for i in range(len(polygons)):
+        check_normals(polygons[i], i)
     print('adj', check_adjacency(polygons))
     print('adj err_edge count', check_adjacency_edge())
     print('all_edges ', len(all_edges), 'all verts', len(all_verts2), 'polygons', len(polygons))

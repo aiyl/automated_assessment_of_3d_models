@@ -49,5 +49,3 @@ class Check:
        if count == 4:
            self.sep_face_count += 1
 
-
-
