@@ -7,9 +7,10 @@ import parse_obj
 import check_obj
 import check_uv
 import check_renders
+import check_normals
 dir = os.path.abspath(os.curdir)
 reference = dir + '/Tests/check1.obj'
-solve = dir + '/Tests/check_area2.obj'
+solve = dir + '/Tests/check1.obj'
 
 def get_renders(file_path, obj_type):
     renders = []
@@ -62,6 +63,8 @@ if __name__ == '__main__':
           check_obj.multiply_connected_geometry, 'double vertices', len(obj.double_vertices), 'err_face', obj.err_face)
 
     #check_uv
-
-    check_uv = check_uv.Check_UV(obj.polygons, obj.uv_coords, obj.all_uv_edge)
+    check_uv = check_uv.Check_UV(obj.polygons)
     print( 'percent_busy', check_uv.percent_busy, ' area', check_uv.polygon_areas)
+    #check_normals
+    check_normals = check_normals.Check_normals(obj.polygons)
+    print('err_normal_face', check_normals.err_normals_count)

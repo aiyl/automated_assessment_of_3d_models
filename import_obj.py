@@ -149,12 +149,15 @@ def sum_of_all_vectors(vecs):
 
 def check_normals(polygon, number):
     p = []
-    #print('pol number', number)
+    print('pol number', number)
     for i in range(len(polygon.points.verts_coords)):
         p.append(polygon.points.verts_coords[i])
     b = np.array(points_different([0, 0, 0], p[0]))
     a = np.array(points_different([0, 0, 0], p[1]))
     c = np.array(points_different([0, 0, 0], p[2]))
+    x2 = points_different(b, a)
+    y2 = points_different(c, a)
+    N2 = vector_multiplication(x2, y2)
     x = add_vectors(b, a)
     y = add_vectors(c, a)
     N = vector_multiplication(x, y)

@@ -9,10 +9,8 @@ class Check_UV:
     uv_map_edge = 1
     uv_map_area = 1
     percent_busy = 0
-    def __init__(self, polygons, uv_coords, all_uv_edges):
+    def __init__(self, polygons):
         self.polygons = polygons
-        self.uv_coords = uv_coords
-        self.uv_edges = all_uv_edges
         self.check_uv()
 
     def polygon_area(self, x, y):
