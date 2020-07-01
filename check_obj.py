@@ -1,6 +1,6 @@
 class Adjacency:
-    def __init__(self, polygon, edge):
-        self.polygon = polygon
+    def __init__(self, polygon_number, edge):
+        self.polygon_number = polygon_number
         self.edge = edge
 
 class Check:
@@ -14,7 +14,7 @@ class Check:
         self.check_adjacency_edge()
 
     def check_adjacency_edge(self):
-        global adj
+
         all_edges = self.obj.all_edges
         polygons = self.obj.polygons
         count_adjacency = []
@@ -26,26 +26,33 @@ class Check:
                         1]) or \
                             (polygons[k].pol_edges[l][1] == all_edges[i][0] and polygons[k].pol_edges[l][0] ==
                              all_edges[i][1]):
+                        pol_number = polygons[k].number
                         count += 1
             if count == 1:
-                self.sep_edge_count +=1
-                adj = Adjacency(polygons[k], polygons[k].pol_edges[l])
+                self.sep_edge_count += 1
+                adj = Adjacency(pol_number, polygons[k].pol_edges[l])
+                print('debug', pol_number)
                 self.sep_edges_list.append(adj)
-                self.check_separate_face(self.sep_edges_list)
             #count_adjacency.append(count)
 
             if count > 2:
                 self.multiply_connected_geometry += 1
+        self.check_separate_face(self.sep_edges_list)
 
     def check_separate_face(self, adjacency_edges):
-       count = 0
+       check = []
+       check2 = 0
        for i in range(len(adjacency_edges)):
-           k = 1
-           count = 0
+           k = 0
+           count = 1
            while k < len(adjacency_edges)-1:
-               if adjacency_edges[k].polygon.number == adjacency_edges[i].polygon.number:
+               if adjacency_edges[k].polygon_number == adjacency_edges[i].polygon_number:
+                    check2 = adjacency_edges[i].polygon_number
                     count += 1
                k +=1
-       if count == 4:
-           self.sep_face_count += 1
+           if count == len(self.obj.polygons[adjacency_edges[i].polygon_number-1].points.point_number):
+               if not check2 in check:
+                   check.append(check2)
+                   self.sep_face_count += 1
+                   print(check)
 

@@ -10,7 +10,7 @@ import check_renders
 import check_normals
 dir = os.path.abspath(os.curdir)
 reference = dir + '/Tests/check1.obj'
-solve = dir + '/Tests/check1.obj'
+solve = dir + '/Tests/separate_face.obj'
 
 def get_renders(file_path, obj_type):
     renders = []
