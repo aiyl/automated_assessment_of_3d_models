@@ -9,15 +9,16 @@ import check_uv
 import check_renders
 import check_normals
 dir = os.path.abspath(os.curdir)
-reference = dir + '/Tests/un_normal_cylynder.obj'
-solve = dir + '/Tests/check1.obj'
+reference = dir + '/Tests/isbaForBlend.obj'
+solve = dir + '/Tests/isba/2965575_IS_.obj'
 
 def get_renders(file_path, obj_type):
     renders = []
     obj = trimesh.load(file_path, process = False)
     try:
         meshes_list = obj.dump()
-        scene = trimesh.Scene(meshes_list)
+        mesh = meshes_list.sum()
+        scene = mesh.scene()
     except:
         mesh = obj
         scene = mesh.scene()
@@ -49,8 +50,43 @@ if __name__ == '__main__':
     solve_renders = get_renders(solve, 'solve')
     reference_renders = get_renders(reference, 'reference')
     check_renders = check_renders.Check_renders(reference_renders, solve_renders)
+    obj = trimesh.load(solve, process=False)
+    obj2 = trimesh.load(reference, process=False)
+    try:
+        v1 = obj.voxelized(pitch=0.25)
+    except:
+        meshes_list = obj.dump()
+        mesh = meshes_list.sum()
+        v1 = mesh.voxelized(pitch=0.25)
+
+    try:
+        v2 = obj2.voxelized(pitch=0.25)
+    except:
+        meshes_list = obj2.dump()
+        mesh = meshes_list.sum()
+        v2 = mesh.voxelized(pitch=0.25)
+
+#    result = list(set(v1) & set(v2))
+    c= 0
+    nope = 0
+    v1.show()
+    if v1.points.size >= v2.points.size:
+        c = np.in1d(v2.points, v1.points)
+        for i in range(len(c)):
+            if c[i] == True:
+                nope += 1
+        percent = (nope*100)/v1.points.size
+    else:
+        c = np.in1d(v1.points, v2.points)
+        for i in range(len(c)):
+            if c[i] == True:
+                nope += 1
+        percent = (nope * 100) / v2.points.size
+    print(percent)
+
     print('check renders', check_renders.all_points)
     #check material
+    """
     mtl1 = parse_mtl.Mtl(reference)
     mtl2 = parse_mtl.Mtl(solve)
     checker = check_materials.Checker(mtl1, mtl2)
@@ -67,5 +103,5 @@ if __name__ == '__main__':
     print( 'percent_busy', check_uv.percent_busy, ' area', check_uv.polygon_areas)
     #check_normals
     #check_normals = check_normals.Check_normals(obj.polygons)
-    check_normals = check_normals.Check_normals2(obj.polygons)
-    print('err_normal_face', check_normals.err_normals_count)
+    check_normals = check_normals.Check_normals(obj.polygons)
+    print('err_normal_face', check_normals.err_normals_count)"""
