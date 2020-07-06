@@ -14,8 +14,11 @@ class Trimesh:
 
         renders = check_renders.Check_renders(reference_renders, solve_renders)
         self.render_points = renders.all_points
-        for i in range(len(solve_path)):
-            voxel = self.voxel_compare(dir_path + solve_path[i] )
+        i = 0
+        print(len(solve_path))
+        while i <1:
+            self.voxel_compare(dir_path + solve_path[i] )
+            i += 1
 
 
     def get_renders(self, file_path, obj_type):
@@ -72,7 +75,13 @@ class Trimesh:
         #    result = list(set(v1) & set(v2))
         c = 0
         nope = 0
-        #v1.show()
+        print('v1 volume', v1.volume)
+        print('v2 volume', v2.volume)
+        scale = round(v2.volume/v1.volume, 3)
+        scale_list = [scale, scale, scale]
+        #print(v1.apply_transform(trimesh.transformations.scale_and_translate(scale=scale_list)))
+
+        print('v1 volume after scale', v1.volume)
         if v1.points.size >= v2.points.size:
             c = np.in1d(v2.points, v1.points)
             for i in range(len(c)):
@@ -85,5 +94,7 @@ class Trimesh:
                 if c[i] == True:
                     nope += 1
             percent = (nope * 100) / v2.points.size
+
+        print(solve, percent)
         self.voxel_points.append(percent)
 
