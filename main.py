@@ -1,4 +1,6 @@
 import os
+import sys
+
 import numpy as np
 import parse_mtl
 import check_materials
@@ -10,22 +12,25 @@ import check_normals
 import trimesh_module
 
 dir = os.path.abspath(os.curdir)
-reference = dir + '/Tests/isbaForBlend.obj'
-solve = dir + '/Tests/isba/2976376_OK_.obj'
+#reference = dir + '/Tests/check1.obj'
+#solve = dir + '/Tests/isbaForBlend.obj'
+reference = sys.argv[1]
+solve = sys.argv[2]
 #print(os.listdir(path=dir+'/Tests/isba') )
 
 
 if __name__ == '__main__':
     """
     #check renders
-    trimesh_module = trimesh_module.Trimesh(reference, os.listdir(path=dir+'/Tests/isba'),  dir+'/Tests/isba/')
+    trimesh_module = trimesh_module.Trimesh(reference, solve)
     print('voxel compare', trimesh_module.voxel_points)
+    """
     #check material
     mtl1 = parse_mtl.Mtl(reference)
     mtl2 = parse_mtl.Mtl(solve)
     checker = check_materials.Checker(mtl1, mtl2)
     print('material points', checker.pointer())
-    """
+
     #check obj
     obj = parse_obj.Obj(solve)
     check_obj = check_obj.Check(obj)

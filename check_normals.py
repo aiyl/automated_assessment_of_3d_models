@@ -24,7 +24,7 @@ class Check_normals:
             return True
 
     def sum_vectors(self, v, w):
-        return [vi - wi for vi, wi in zip(v, w)]
+        return [vi + wi for vi, wi in zip(v, w)]
 
     def sum_of_all_vectors(self, vecs):
         return reduce(self.sum_vectors, vecs)
@@ -38,6 +38,7 @@ class Check_normals:
             y += vertices[i][1]
             z += vertices[i][2]
         return [x/len(vertices),y/len(vertices),z/len(vertices)]
+
     def check_normals(self, polygon):
 
         a = [0, 0, 0] #dot inside mesh
@@ -54,7 +55,23 @@ class Check_normals:
             if not self.vector_multiplication(polygon.normals.verts_coords[i], vec):
                 return False
         return True
+    def check_normals2(self, polygon):
+        xyz = self.middle_point(polygon.points.verts_coords)
+        a = polygon.normals.verts_coords[0]
+        b = polygon.normals.verts_coords[1]
+        c = polygon.normals.verts_coords[2]
+        normal = self.sum_of_all_vectors([a,b,c])
+
+        d = -1*(normal[0]*xyz[0]+normal[1]*xyz[1]+normal[2]*xyz[0])
+        if normal[0]*xyz[0]+normal[1]*xyz[1]+normal[2]*xyz[2] + d>=0:
+            return True
+        else:
+            return False
     def main(self, polygons):
+        list = []
         for i in range(len(polygons)):
-            if not self.check_normals(polygons[i]):
-                self.err_normals_count+=1
+            if self.check_normals2(polygons[i]):
+                list.append('Yes')
+            else:
+                list.append('No')
+        print(list)

@@ -14,10 +14,8 @@ class Check:
         self.check_adjacency_edge()
 
     def check_adjacency_edge(self):
-        list = [] #DEL
         all_edges = self.obj.all_edges
         polygons = self.obj.polygons
-        count_adjacency = []
         for i in range(len(all_edges)):
             count = 0
             for k in range(len(polygons)):
@@ -28,7 +26,6 @@ class Check:
                              all_edges[i][1]):
                         pol_number = polygons[k].number
                         count += 1
-            list.append(count)
             if count == 1:
                 self.sep_edge_count += 1
                 adj = Adjacency(pol_number, polygons[k].pol_edges[l])
@@ -38,7 +35,6 @@ class Check:
 
             if count > 2:
                 self.multiply_connected_geometry += 1
-        print(list)
         self.check_separate_face(self.sep_edges_list)
 
     def check_separate_face(self, adjacency_edges):

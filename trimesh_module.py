@@ -5,19 +5,19 @@ import trimesh
 class Trimesh:
     render_points = 0
     voxel_points = []
-    def __init__(self, reference_path, solve_path, dir_path):
+    def __init__(self, reference_path, solve_path):
         self.reference_path = reference_path
         self.solve_path = solve_path
-        solve_renders = self.get_renders(dir_path + solve_path[0], 'solve')
+        solve_renders = self.get_renders(solve_path, 'solve')
 
         reference_renders = self.get_renders(reference_path, 'reference')
 
-        renders = check_renders.Check_renders(reference_renders, solve_renders)
-        self.render_points = renders.all_points
+        #renders = check_renders.Check_renders(reference_renders, solve_renders)
+        #self.render_points = renders.all_points
         i = 0
         print(len(solve_path))
         while i <1:
-            self.voxel_compare(dir_path + solve_path[i] )
+            self.voxel_compare(solve_path[i] )
             i += 1
 
 
@@ -30,7 +30,6 @@ class Trimesh:
         except:
             mesh = obj
             scene = mesh.scene()
-        #scene.show()
         scene.centroid
         #scene.apply_transform(trimesh.transformations.random_rotation_matrix())
         rotate = trimesh.transformations.rotation_matrix(
@@ -58,11 +57,13 @@ class Trimesh:
 
         obj = trimesh.load(solve, process=False)
         obj2 = trimesh.load(self.reference_path, process=False)
+        obj2.show()
         try:
             v1 = obj.voxelized(pitch=0.25)
         except:
             meshes_list = obj.dump()
             mesh = meshes_list.sum()
+            scene = trimesh.Scene(meshes_list)
             v1 = mesh.voxelized(pitch=0.25)
 
         try:

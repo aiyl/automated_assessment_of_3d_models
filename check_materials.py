@@ -25,6 +25,7 @@ class Checker:
     def check_diffuse_color(self, reference_materials, solve_materials):
         diffuse_color1= []
         diffuse_color2 = []
+
         for i in range(len(reference_materials.diffuse_color)):
             reference_materials.diffuse_color[i] = float(reference_materials.diffuse_color[i])
             diffuse_color1.append(reference_materials.diffuse_color[i])
@@ -34,6 +35,8 @@ class Checker:
         lab1 = color.rgb2lab([[diffuse_color1]],  illuminant='D65', observer='2')
         lab2 = color.rgb2lab([[diffuse_color2]], illuminant='D65', observer='2')
         deltaE = skimage.color.deltaE_cie76(lab1, lab2)
+        deltaE2 = skimage.color.deltaE_ciede2000(lab1, lab2, 1, 1, 1)
+        print('deltsE',deltaE, 'deltsE2', deltaE2)
         points = int((101-int(deltaE))/10) #max point 10
         return points
 
