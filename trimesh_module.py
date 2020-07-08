@@ -15,9 +15,8 @@ class Trimesh:
         #renders = check_renders.Check_renders(reference_renders, solve_renders)
         #self.render_points = renders.all_points
         i = 0
-        print(len(solve_path))
         while i <1:
-            self.voxel_compare(solve_path[i] )
+            self.voxel_compare(solve_path )
             i += 1
 
 
@@ -53,27 +52,22 @@ class Trimesh:
                 print("unable to save image", str(E))
         return renders
 
-    def voxel_compare(self,solve):
-
-        obj = trimesh.load(solve, process=False)
-        obj2 = trimesh.load(self.reference_path, process=False)
-        obj2.show()
+    def voxelized_obj(self, obj):
         try:
-            v1 = obj.voxelized(pitch=0.25)
+            v = obj.voxelized(pitch=0.25)
         except:
             meshes_list = obj.dump()
             mesh = meshes_list.sum()
             scene = trimesh.Scene(meshes_list)
-            v1 = mesh.voxelized(pitch=0.25)
+            v = mesh.voxelized(pitch=0.25)
+        return v
+    def voxel_compare(self,solve):
 
-        try:
-            v2 = obj2.voxelized(pitch=0.25)
-        except:
-            meshes_list = obj2.dump()
-            mesh = meshes_list.sum()
-            v2 = mesh.voxelized(pitch=0.25)
+        obj = trimesh.load(solve, process=False)
+        obj2 = trimesh.load(self.reference_path, process=False)
+        v1 = self.voxelized_obj(obj)
+        v2 = self.voxelized_obj(obj2)
 
-        #    result = list(set(v1) & set(v2))
         c = 0
         nope = 0
         print('v1 volume', v1.volume)
@@ -82,7 +76,6 @@ class Trimesh:
         scale_list = [scale, scale, scale]
         #print(v1.apply_transform(trimesh.transformations.scale_and_translate(scale=scale_list)))
 
-        print('v1 volume after scale', v1.volume)
         if v1.points.size >= v2.points.size:
             c = np.in1d(v2.points, v1.points)
             for i in range(len(c)):

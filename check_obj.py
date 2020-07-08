@@ -38,14 +38,11 @@ class Check:
         self.check_separate_face(self.sep_edges_list)
 
     def check_separate_face(self, adjacency_edges):
-
        for i in range(len(adjacency_edges)):
-           k = 0
            count = 1
-           while i < len(adjacency_edges)-1:
+           for k in range(i, len(adjacency_edges)):
                if adjacency_edges[k].polygon_number == adjacency_edges[i].polygon_number:
                     count += 1
-               k +=1
            if count == len(self.obj.polygons[adjacency_edges[i].polygon_number-1].points.point_number):
                self.sep_face_count += 1
 

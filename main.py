@@ -20,11 +20,11 @@ solve = sys.argv[2]
 
 
 if __name__ == '__main__':
-    """
+
     #check renders
     trimesh_module = trimesh_module.Trimesh(reference, solve)
     print('voxel compare', trimesh_module.voxel_points)
-    """
+
     #check material
     mtl1 = parse_mtl.Mtl(reference)
     mtl2 = parse_mtl.Mtl(solve)
@@ -43,5 +43,5 @@ if __name__ == '__main__':
 
     #check_normals
     #check_normals = check_normals.Check_normals(obj.polygons)
-    check_normals = check_normals.Check_normals(obj.polygons)
+    check_normals = check_normals.Check_normals(obj)
     print('err_normal_face', check_normals.err_normals_count)
