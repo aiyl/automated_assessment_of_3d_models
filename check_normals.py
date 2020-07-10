@@ -114,6 +114,7 @@ class Check_normals:
                 else:
                     list.append(True)
             print(list)
+            #if list.count(False) == len(polygons[i].pol_edges):
             if list.count(False) == len(polygons[i].pol_edges):
                 self.err_normals_count += 1
 

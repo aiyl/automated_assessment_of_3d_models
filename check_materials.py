@@ -36,8 +36,8 @@ class Checker:
         lab2 = color.rgb2lab([[diffuse_color2]], illuminant='D65', observer='2')
         deltaE = skimage.color.deltaE_cie76(lab1, lab2)
         deltaE2 = skimage.color.deltaE_ciede2000(lab1, lab2, 1, 1, 1)
-        print('deltsE',deltaE, 'deltsE2', deltaE2)
-        points = int((101-int(deltaE))/10) #max point 10
+        #print('deltsE',deltaE, 'deltsE2', deltaE2)
+        points = int((101-int(deltaE2))/10) #max point 10
         return points
 
     def pointer(self):
@@ -45,5 +45,8 @@ class Checker:
         if len(check_names) != 0:
             print('need_material', check_names)
         self.maxPoint = len(self.reference.materials)*10
-        points = (self.points*10)/self.maxPoint
-        return int(points)
+        if self.maxPoint != 0:
+            points = (self.points*10)/self.maxPoint
+            return int(points)
+        else:
+            return 0

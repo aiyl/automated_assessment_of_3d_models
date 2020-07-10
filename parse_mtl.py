@@ -11,14 +11,14 @@ class Mtl:
     materials = []
     material_name = ''
     def __init__(self, path):
-        self.file1 = path
+        self.file = path
         self.parseMtl()
     def parseMtl(self):
         materials = []
-        file = self.file1
-        mtl1 = file.split('.')[0] + '.mtl'
+        file = self.file
+        mtl = file.split('.')[0] + '.mtl'
         try:
-            file = open(mtl1, 'r')
+            file = open(mtl, 'r')
             for line in file:
                 words = line.split()
                 if len(words) == 0 or words[0].startswith('#'):
@@ -39,4 +39,4 @@ class Mtl:
                 print(self.materials[i].material_name, self.materials[i].diffuse_color )
 """
         except Exception as e:
-            print('File mtl and file obj must match! file must be named:\n'+ mtl1.split('/')[2], traceback.format_exc())
+            print('File mtl and file obj must match! file must be named:\n'+ mtl, traceback.format_exc())

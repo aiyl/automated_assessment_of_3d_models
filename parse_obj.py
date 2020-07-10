@@ -143,3 +143,4 @@ class Obj:
             self.all_uv_edge = self.get_all_edges(self.all_uv_verts)
         except Exception as e:
             print('Error format! File has to be obj:\n', traceback.format_exc())
+            raise SystemExit

@@ -5,13 +5,10 @@ import cv2
 import numpy as np
 from skimage.metrics import structural_similarity as ssim
 
-
 ERR_OK = 0
 ERR_WA = 1
 ERR_PE = 2
 ERR_UH = 3
-
-rootDir = os.path.dirname(os.path.abspath(__file__))
 eps = 10e-3
 maxPoint = 5
 errweight = 10
@@ -33,28 +30,14 @@ class Check_renders:
 		err /= float(imageA.shape[0] * imageA.shape[1])
 		return err
 
-
 	def compare(self, imgAnsPath, imgOutPath):
 		x1 = cv2.imread(imgAnsPath)
 		x2 = cv2.imread(imgOutPath)
-
-		x1 = cv2.cvtColor(x1, cv2.COLOR_BGR2GRAY)
-		x2 = cv2.cvtColor(x2, cv2.COLOR_BGR2GRAY)
-
-		m = self.mse(x1, x2)
-		s = ssim(x1, x2)
-		ds = (1 - s) / 2
-
-		#print("mse: %s, ssim: %s, dssim: %s" % (m, s, ds))
-
-		if ds < eps:
-			#print(ds)
-			return ds
-			#self.points = ds
-			#exit(ERR_OK)
-		else:
-			#self.points = max(int((1 - ds*errweight)*maxPoint), 0)
-			return max(int((1 - ds*errweight)*maxPoint), 0)
-			#print(max(int((1 - ds*errweight)*maxPoint), 0))
-			#exit(ERR_OK)
-
+		b1, g1, r1 = cv2.split(x1)
+		b2, g2, r2 = cv2.split(x2)
+		b = ssim(b1, b2)
+		g = ssim(g1, g2)
+		r = ssim(r1, r2)
+		ds = (1.0 - (b + g + r) * 0.333333) / 2.0
+		points = max(int(round((1 - ds * errweight) * maxPoint, 0)), 0)
+		return points
