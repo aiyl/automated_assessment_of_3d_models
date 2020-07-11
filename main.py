@@ -6,8 +6,9 @@ import parse_obj
 import check_obj
 import check_uv
 #import check_normals
-import trimesh_module
+import check_renders
 import  accrue_points
+import voxel_compare
 
 reference = sys.argv[1]
 solve = sys.argv[2]
@@ -15,10 +16,12 @@ solve = sys.argv[2]
 
 if __name__ == '__main__':
     #check renders
-    trimesh_module = trimesh_module.Trimesh(reference, solve)
-    print('voxel compare', trimesh_module.voxel_points, 'renders check', trimesh_module.render_points)
+    renders = check_renders.Trimesh(reference, solve)
+    print('renders points', renders.render_points)
+    voxels = voxel_compare.Voxel(reference, solve)
     point0 = trimesh_module.voxel_points
     point1 = trimesh_module.render_points
+
     #check material
 #    mtl1 = parse_mtl.Mtl(reference)
     mtl1 = parse_mtl.Mtl(reference)
@@ -41,6 +44,7 @@ if __name__ == '__main__':
     check_uv = check_uv.Check_UV(obj.polygons)
     print('percent_busy', check_uv.percent_busy)
     point7 = accrue_points.Obj_points('uv', 1, 10, check_uv.percent_busy , 80)
+
     #check_normals
     #check_normals = check_normals.Check_normals(obj.polygons)
     #check_normals = check_normals.Check_normals(obj)
