@@ -5,7 +5,7 @@ class Voxels:
     def __init__(self, reference_path, solve_path):
         self.reference_path = reference_path
         self.solve_path = solve_path
-        self.voxel_compare(solve_path)
+        self.voxel_compare()
 
 
     def voxelized_obj(self, obj):

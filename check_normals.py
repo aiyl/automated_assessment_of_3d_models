@@ -103,8 +103,8 @@ class Check_normals:
         polygons = self.obj.polygons
         all_edges = []
         for i in range(len(polygons)):
-            for k in range(len(polygons[i].pol_edges)):
-                all_edges.append(polygons[i].pol_edges[k])
+            all_edges.append(sum(polygons[i].pol_edges, []))
+        all_edges = sum(all_edges, [])
         for i in range(len(polygons)):
             list = []
             for k in range(len(polygons[i].pol_edges)):

@@ -1,0 +1,7 @@
+checking model D:\automated_assessment_of_3d_models\Tests\EmptyFace.obj
+ separate face 0 separate_edge 4 multiply_connected_geometry 0 double vertices 0 count face with more than 4 vertices 0
+obj point 9.8
+material check point 12
+uv point 3.7
+voxels compare point 9.9
+final score 6.92
