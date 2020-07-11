@@ -24,6 +24,7 @@ class Obj:
     normals_coords = []
     uv_coords = []
     double_vertices = []
+    can_continue = True
     def __init__(self, file):
         self.file = file
         self.parse()
@@ -141,5 +142,5 @@ class Obj:
             self.all_uv_verts = self.get_all_verts('uv')
             self.all_edges = self.get_all_edges(self.all_verts)
             self.all_uv_edge = self.get_all_edges(self.all_uv_verts)
-        except Exception as e:
-            self.all_edges.clear()
+        except :
+            self.can_continue = False

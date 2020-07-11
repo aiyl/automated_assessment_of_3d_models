@@ -60,13 +60,11 @@ class Calc_points:
 
     def calc_points(self, args):
         points = []
-        obj = parse_obj.Obj(self.solve)
         f = open(self.res_path, 'w')
-        if len(obj.all_edges) == 0:
-            f.write('error during opening obj file ' + self.solve)
-            raise SystemExit
+        obj = parse_obj.Obj(self.solve)
+        if obj.can_continue == False:
+            f.write('error during opening ' + self.solve + '\n')
 
-        f.write('checking model ' + self.solve + '\n')
         # check renders
         for i in range(len(args)):
             if args[i] == 'render':
@@ -78,45 +76,52 @@ class Calc_points:
             # check_voxels
             if args[i] == 'voxel':
                 voxels = voxel_compare.Voxels(self.reference, self.solve)
-                points.append(round(voxels.voxel_points/10, 2))
+                vox_point = round(voxels.voxel_points/10, 2)
+                points.append(vox_point)
                 # print('voxel compare', voxels.voxel_points )
-                f.write('voxels compare point ' + str(round(voxels.voxel_points/10, 2)) + '\n')
+                f.write('voxels compare point ' + str(vox_point) + '\n')
 
             # check material
             if args[i] == 'material':
                 mtl1 = parse_mtl.Mtl(self.reference)
                 mtl2 = parse_mtl.Mtl(self.solve)
                 checker = check_materials.Checker(mtl1, mtl2)
-                points.append(checker.pointer())
+                mat_point = checker.pointer()
+                points.append(mat_point)
                 # print('material points', checker.pointer())
-                f.write('material check point ' + str(checker.pointer()) + '\n')
+                f.write('material check point ' + str(mat_point) + '\n')
+
             # check obj
             if args[i] == 'obj':
-                check_geometry = check_obj.Check(obj)
-                print('separate face ', check_geometry.sep_face_count, 'separate_edge ', check_geometry.sep_edge_count,
-                      'multiply_connected_geometry ',
-                      check_geometry.multiply_connected_geometry, 'double vertices', len(obj.double_vertices),
-                      'err_face',
-                      obj.err_face)
-                f.write(
-                    ' separate face ' + str(check_geometry.sep_face_count) + ' separate_edge ' + str(check_geometry.sep_edge_count) +
-                    ' multiply_connected_geometry ' +
-                    str(check_geometry.multiply_connected_geometry) + ' double vertices ' +str(len(obj.double_vertices)) +
-                    ' count face with more than 4 vertices ' + str(obj.err_face) + '\n')
-                point1 = Obj_points(3, 10, check_geometry.sep_face_count, len(obj.all_edges)).point
-                point2 = Obj_points(2, 10, check_geometry.sep_edge_count, len(obj.all_edges)).point
-                point3 = Obj_points(3, 10, check_geometry.multiply_connected_geometry, len(obj.all_edges)).point
-                point4 = Obj_points(1, 10, len(obj.double_vertices), len(obj.verts_coords)).point
-                point5 = Obj_points(1, 10, obj.err_face, len(obj.polygons)).point
-                obj_point = self.percentage_ratio([point1, point2, point3, point4, point5])
-                f.write('obj point ' + str(obj_point) + '\n')
+                if obj.can_continue == True:
+                    check_geometry = check_obj.Check(obj)
+
+                    f.write(
+                        ' separate face ' + str(check_geometry.sep_face_count) + ' separate_edge ' + str(
+                            check_geometry.sep_edge_count) +
+                        ' multiply_connected_geometry ' +
+                        str(check_geometry.multiply_connected_geometry) + ' double vertices ' + str(
+                            len(obj.double_vertices)) +
+                        ' count face with more than 4 vertices ' + str(obj.err_face) + '\n')
+                    point1 = Obj_points(3, 10, check_geometry.sep_face_count, len(obj.all_edges)).point
+                    point2 = Obj_points(2, 10, check_geometry.sep_edge_count, len(obj.all_edges)).point
+                    point3 = Obj_points(3, 10, check_geometry.multiply_connected_geometry, len(obj.all_edges)).point
+                    point4 = Obj_points(1, 10, len(obj.double_vertices), len(obj.verts_coords)).point
+                    point5 = Obj_points(1, 10, obj.err_face, len(obj.polygons)).point
+                    obj_point = self.percentage_ratio([point1, point2, point3, point4, point5])
+                else:
+                    obj_point = 0
                 points.append(obj_point)
+                f.write('obj point ' + str(obj_point) + '\n')
+
 
             # check_uv
             if args[i] == 'uv':
                 check_uv_map = check_uv.Check_UV(obj.polygons)
+
                 f.write('uv point ' + str(check_uv_map.percent_busy / 10) + '\n')
                 points.append(UV_points(1, 10, check_uv_map.percent_busy, 10).point)
+
 
         self.point = self.percentage_ratio(points)
         f.write('final score ' + str(self.point))
@@ -124,4 +129,4 @@ class Calc_points:
         # check_normals = check_normals.Check_normals(obj.polygons)
         # check_normals = check_normals.Check_normals(obj)
         # print('err_normal_face', check_normals.err_normals_count)
-
+        f.close()

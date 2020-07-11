@@ -1,0 +1,7 @@
+checking model D:\automated_assessment_of_3d_models\Tests\isba\2976653_OK_56.obj
+ separate face 1 separate_edge 140 multiply_connected_geometry 0 double vertices 44 count face with more than 4 vertices 54
+obj point 9.6
+material check point 0
+uv point 0.0
+voxels compare point 0.37
+final score 2.49

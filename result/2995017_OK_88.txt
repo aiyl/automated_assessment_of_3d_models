@@ -1,0 +1,6 @@
+error during opening D:\automated_assessment_of_3d_models\Tests\isba\2995017_OK_88.obj
+obj point 0
+material check point 0
+uv point 0.0
+voxels compare point 9.68
+final score 2.42

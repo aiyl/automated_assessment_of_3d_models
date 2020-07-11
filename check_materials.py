@@ -34,9 +34,7 @@ class Checker:
             diffuse_color2.append(solve_materials.diffuse_color[i])
         lab1 = color.rgb2lab([[diffuse_color1]],  illuminant='D65', observer='2')
         lab2 = color.rgb2lab([[diffuse_color2]], illuminant='D65', observer='2')
-        deltaE = skimage.color.deltaE_cie76(lab1, lab2)
         deltaE2 = skimage.color.deltaE_ciede2000(lab1, lab2, 1, 1, 1)
-        #print('deltsE',deltaE, 'deltsE2', deltaE2)
         points = int((101-int(deltaE2))/10) #max point 10
         return points
 
