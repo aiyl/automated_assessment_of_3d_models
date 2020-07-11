@@ -1,51 +1,43 @@
+import sys
+import os
+from json import loads
+import cv2
 import numpy as np
-import check_renders
-import trimesh
+from skimage.metrics import structural_similarity as ssim
 
-class Trimesh:
-    render_points = 0
+ERR_OK = 0
+ERR_WA = 1
+ERR_PE = 2
+ERR_UH = 3
+eps = 10e-3
+maxPoint = 5
+errweight = 10
+class Check_renders:
+	points = 0
+	all_points = 0
+	def __init__(self, imgOut, imgAns):
+		self.imgOut = imgOut  # path to image эталон
+		self.imgAns = imgAns  # решение участника
+		for i  in range(len(imgOut)):
+			self.points += self.compare(imgOut[i], imgAns[i])
+		verh = 100 * self.points
+		niz = maxPoint*len(imgAns)*10
+		dif =int( verh/niz)
+		self.all_points = dif
 
-    def __init__(self, reference_path, solve_path):
-        self.reference_path = reference_path
-        self.solve_path = solve_path
-        transformations = []
-        for i in range(10):
-            transformations.append(trimesh.transformations.random_rotation_matrix())
-        solve_renders = self.get_renders(solve_path, 'solve', transformations)
-        reference_renders = self.get_renders(reference_path, 'reference', transformations)
-        renders = check_renders.Check_renders(reference_renders, solve_renders)
-        self.render_points = renders.all_points
+	def mse(self, imageA, imageB):
+		err = np.sum((imageA.astype("float") - imageB.astype("float")) ** 2)
+		err /= float(imageA.shape[0] * imageA.shape[1])
+		return err
 
-
-    def get_renders(self, file_path, obj_type, transformations):
-        renders = []
-
-        obj = trimesh.load(file_path, process = False)
-        try:
-            meshes_list = obj.dump()
-            scene = trimesh.Scene(meshes_list)
-        except:
-            mesh = obj
-            scene = mesh.scene()
-        scene.centroid
-        rotate = trimesh.transformations.rotation_matrix(
-            angle=25,
-            direction=[0, 0, 5],
-            point=scene.centroid)
-        for i in range(10):
-            scene.apply_transform(transformations[i])
-            try:
-                file_name = 'renders/render_' + obj_type + str(i) + '.png'
-                renders.append(file_name)
-                png = scene.save_image(resolution=[500, 500], visible=True)
-                with open(file_name, 'wb') as f:
-                    f.write(png)
-                    f.close()
-
-            except BaseException as E:
-                print("unable to save image", str(E))
-        return renders
-
-
-
-
+	def compare(self, imgAnsPath, imgOutPath):
+		x1 = cv2.imread(imgAnsPath)
+		x2 = cv2.imread(imgOutPath)
+		b1, g1, r1 = cv2.split(x1)
+		b2, g2, r2 = cv2.split(x2)
+		b = ssim(b1, b2)
+		g = ssim(g1, g2)
+		r = ssim(r1, r2)
+		ds = (1.0 - (b + g + r) * 0.333333) / 2.0
+		points = max(int(round((1 - ds * errweight) * maxPoint, 0)), 0)
+		return points
