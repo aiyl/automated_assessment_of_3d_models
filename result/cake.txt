@@ -1,6 +1,6 @@
  separate face 0 separate_edge 0 multiply_connected_geometry 0 double vertices 0 count face with more than 4 vertices 0
 obj point 10.0
-material check point 0
-uv point 3.8
-renders check point 0
-final score 3.0
+material check point 10
+uv point 0.0
+voxels compare point 4.62
+final score 6.16

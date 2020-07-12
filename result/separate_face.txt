@@ -1,7 +1,6 @@
-checking model D:\automated_assessment_of_3d_models\Tests\separate_face.obj
- separate face 1 separate_edge 8 multiply_connected_geometry 0 double vertices 4 count face with more than 4 vertices 0
-obj point 7.0
+separate face 1 separate_edge 8 multiply_connected_geometry 0 double vertices 4 count face with more than 4 vertices 0
+obj point 4.0
+voxels compare point 2.15
 material check point 0
-uv point 3.8
-voxels compare point 2.18
-final score 2.79
+can not find mestrials: ['initialShadingGroup']
+final score 2.05

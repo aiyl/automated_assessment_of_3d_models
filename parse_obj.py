@@ -1,8 +1,11 @@
-import traceback
+import numpy as np
+
+
 class Points:
     def __init__(self, point_number, verts_coords):
         self.point_number = point_number
         self.verts_coords = verts_coords
+
 
 class Polygon:
     def __init__(self, pol_edges, points, normals, uv_verts, uv_edges, number):
@@ -13,83 +16,57 @@ class Polygon:
         self.uv_edges = uv_edges
         self.number = number
 
+
 class Obj:
     polygons = []
     err_face = 0
-    all_uv_edge = []
     all_edges = []
-    all_verts = []
-    all_uv_verts = []
     verts_coords = []
     normals_coords = []
     uv_coords = []
     double_vertices = []
-    can_continue = True
+    logs = True
+
     def __init__(self, file):
         self.file = file
         self.parse()
 
-    def get_all_verts(self, args):
-        all_verts = []
-        for i in range(len(self.polygons)):
-            if args == 'pol':
-                all_verts.append(self.polygons[i].points.point_number)
-            else:
-                all_verts.append(self.polygons[i].uv_verts.point_number)
-        return all_verts
+    def check_repeat(self, list1, list2):
+        list = [list1[1], list1[0]]
+        if (list1 in list2) or (list in list2):
+            return False
+        return True
 
-    def check_repeat(self, list, list2):
-        boolean = True
-        for n in range(len(list2)):
-            for m in range(len(list2[n]) - 1):
-                if (list2[n][m] == list[0] and list2[n][m + 1] == list[1]) or (
-                        list2[n][m] == list[1] and list2[n][m + 1] == list[0]):
-                    boolean = False
-        return boolean
-
-    def get_all_edges(self, all_verts):
+    def get_all_edges(self):
         all_edges = []
-        for n in range(len(all_verts)):
-            for m in range(len(all_verts[n])):
-                list3 = []
-                if m == len(all_verts[n]) - 1:
-                    list3.append(all_verts[n][m])
-                    list3.append(all_verts[n][0])
-                else:
-                    list3.append(all_verts[n][m])
-                    list3.append(all_verts[n][m + 1])
-                    # edge = Edge(faces_verts[n][m], faces_verts[n][m+1])
-                if self.check_repeat(list3, all_edges) or len(all_edges) == 0:
-                    all_edges.append(list3)
+        for n in range(len(self.polygons)):
+            for m in range(len(self.polygons[n].pol_edges)):
+                # verts_numbers = []
+                if len(all_edges) == 0:
+                    all_edges.append(self.polygons[n].pol_edges[m])
+                elif self.check_repeat(self.polygons[n].pol_edges[m], all_edges):
+                    all_edges.append(self.polygons[n].pol_edges[m])
         return all_edges
 
     def get_edge(self, faces_verts):
         edges = []
         for m in range(len(faces_verts)):
-            list3 = []
             if m == len(faces_verts) - 1:
-                list3.append(faces_verts[m])
-                list3.append(faces_verts[0])
+                edge = [faces_verts[m], faces_verts[0]]
             else:
-                list3.append(faces_verts[m])
-                list3.append(faces_verts[m + 1])
-            edges.append(list3)
-
+                edge = [faces_verts[m], faces_verts[m + 1]]
+            edges.append(edge)
         return edges
 
     def create_coords_list(self, words, vert_coords_len):
-        list = []
         if vert_coords_len == 3:
             x, y, z = float(words[1]), float(words[2]), float(words[3])
-            list.append(x)
-            list.append(y)
-            list.append(z)
-            return list
+            coords = [x, y, z]
+            return coords
         else:
-            x,y = float(words[1]), float(words[2])
-            list.append(x)
-            list.append(y)
-            return list
+            x, y = float(words[1]), float(words[2])
+            coords = [x, y]
+            return coords
 
     def parse(self):
         number = 0
@@ -103,7 +80,8 @@ class Obj:
                     list = self.create_coords_list(words, 3)
                     for i in range(len(self.verts_coords)):
                         if [round(list[0], 3), round(list[1], 3), round(list[2], 3)] \
-                                == [round(self.verts_coords[i][0], 3), round(self.verts_coords[i][1], 3), round(self.verts_coords[i][2], 3)]:
+                                == [round(self.verts_coords[i][0], 3), round(self.verts_coords[i][1], 3),
+                                    round(self.verts_coords[i][2], 3)]:
                             self.double_vertices.append(list)
                     self.verts_coords.append(list)
                 elif words[0] == 'vt':
@@ -119,7 +97,7 @@ class Obj:
                     uv_list = []
                     for faceIdx in words[1:]:
                         faceVertList.append(faceIdx)
-                    if  len(faceVertList)!=4 and len(faceVertList)!=3:
+                    if len(faceVertList) != 4 and len(faceVertList) != 3:
                         self.err_face += 1
                     faces_verts = []  # индексы вершин грани(ей)
                     vertices = []
@@ -138,9 +116,10 @@ class Obj:
                     polygon = Polygon(self.get_edge(faces_verts), points, normal, uv, self.get_edge(uv_list), number)
                     self.polygons.append(polygon)
             file.close()
-            self.all_verts = self.get_all_verts('pol')
-            self.all_uv_verts = self.get_all_verts('uv')
-            self.all_edges = self.get_all_edges(self.all_verts)
-            self.all_uv_edge = self.get_all_edges(self.all_uv_verts)
-        except :
-            self.can_continue = False
+            #self.all_verts = self.get_all_verts('pol')
+            # self.all_uv_verts = self.get_all_verts('uv')
+            self.all_edges = self.get_all_edges()
+            # self.all_uv_edge = self.get_all_edges(self.all_uv_verts)
+        except Exception as e:
+            self.logs = False
+            print(e)

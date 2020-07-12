@@ -9,14 +9,16 @@ class Voxels:
 
 
     def voxelized_obj(self, obj):
+
         try:
-            v = obj.voxelized(pitch=0.25)
+            v = obj.voxelized(pitch=0.125)
         except:
             meshes_list = obj.dump()
             mesh = meshes_list.sum()
             scene = trimesh.Scene(meshes_list)
-            v = mesh.voxelized(pitch=0.25)
+            v = mesh.voxelized(pitch=0.125)
         return v
+
     def voxel_compare(self):
         obj = trimesh.load(self.solve_path, process=False)
         obj2 = trimesh.load(self.reference_path, process=False)

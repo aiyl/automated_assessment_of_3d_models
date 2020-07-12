@@ -1,0 +1,6 @@
+ separate face 0 separate_edge 54 multiply_connected_geometry 86 double vertices 142 count face with more than 4 vertices 45
+obj point 9.6
+material check point 0
+uv point 0.0
+renders check point 0
+final score 2.4

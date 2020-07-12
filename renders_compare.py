@@ -38,7 +38,7 @@ class Renders:
             try:
                 file_name = 'renders/render_' + obj_type + str(i) + '.png'
                 renders.append(file_name)
-                png = scene.save_image(resolution=[500, 500], visible=True)
+                png = scene.save_image(resolution=[500, 500] , visible=True)
                 with open(file_name, 'wb') as f:
                     f.write(png)
                     f.close()

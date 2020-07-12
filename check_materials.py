@@ -2,7 +2,7 @@ import skimage
 from skimage import io, color
 class Checker:
     points = 0
-    maxPoint = 0
+    need_material = ''
     def __init__(self, reference, solve):
         self.reference = reference
         self.solve = solve
@@ -41,10 +41,10 @@ class Checker:
     def pointer(self):
         check_names = self.check_names()
         if len(check_names) != 0:
-            print('need_material', check_names)
-        self.maxPoint = len(self.reference.materials)*10
-        if self.maxPoint != 0:
-            points = (self.points*10)/self.maxPoint
+            self.need_material =  check_names
+        maxPoint = len(self.reference.materials)*10
+        if maxPoint != 0:
+            points = (self.points*10)/maxPoint
             return int(points)
         else:
             return 0

@@ -5,6 +5,7 @@ import math
 import shapely
 from shapely.geometry import Polygon
 class Check_UV:
+    logs = ''
     polygon_areas = 0
     uv_map_edge = 1
     uv_map_area = 1
@@ -56,5 +57,7 @@ class Check_UV:
             for i in range(len(self.polygons)):
                 self.uv_areas(self.polygons[i])
             self.percent_busy = int(round(self.polygon_areas * 100 / self.uv_map_area))
+        else:
+            self.logs = 'UV map has intersections'
 
 

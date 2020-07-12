@@ -1,7 +1,6 @@
 class Adjacency:
-    def __init__(self, polygon_number, edge):
+    def __init__(self, polygon_number):
         self.polygon_number = polygon_number
-        self.edge = edge
 
 class Check:
     sep_edges_list = []
@@ -28,7 +27,7 @@ class Check:
                         count += 1
             if count == 1:
                 self.sep_edge_count += 1
-                adj = Adjacency(pol_number, polygons[k].pol_edges[l])
+                adj = Adjacency(pol_number)
                 #print('debug', pol_number)
                 self.sep_edges_list.append(adj)
             #count_adjacency.append(count)
@@ -45,4 +44,3 @@ class Check:
                     count += 1
            if count == len(self.obj.polygons[adjacency_edges[i].polygon_number-1].points.point_number):
                self.sep_face_count += 1
-

@@ -10,6 +10,7 @@ class Material_properties:
 class Mtl:
     materials = []
     material_name = ''
+    logs = ''
     def __init__(self, path):
         self.file = path
         self.parseMtl()
@@ -35,8 +36,7 @@ class Mtl:
                     self.materials = materials
             #self.materials.clear()
             file.close()
-            """for i in range(len(self.materials)):
-                print(self.materials[i].material_name, self.materials[i].diffuse_color )
-"""
+
         except Exception as e:
+            self.logs = 'File mtl and file obj must match! file must be named:' + str(mtl)
             print('File mtl and file obj must match! file must be named:\n'+ mtl, traceback.format_exc())

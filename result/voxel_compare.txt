@@ -1,0 +1,4 @@
+error during opening D:\automated_assessment_of_3d_models\Tests\voxel_compare.obj
+obj point 0
+material check point 0
+uv point 0.0
