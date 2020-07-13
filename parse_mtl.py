@@ -37,6 +37,6 @@ class Mtl:
             #self.materials.clear()
             file.close()
 
-        except Exception as e:
+        except:
             self.logs = 'File mtl and file obj must match! file must be named:' + str(mtl)
             print('File mtl and file obj must match! file must be named:\n'+ mtl, traceback.format_exc())

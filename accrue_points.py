@@ -76,7 +76,11 @@ class Calc_points:
             # check_voxels
             if args[i] == 'voxel':
                 voxels = voxel_compare.Voxels(self.reference, self.solve)
-                vox_point = round(voxels.voxel_points/10, 2)
+                if voxels.logs == '':
+                    vox_point = round(voxels.voxel_points/10, 2)
+                else:
+                    vox_point = 0
+                    f.write(voxels.logs + '\n')
                 points.append(vox_point)
                 # print('voxel compare', voxels.voxel_points )
                 f.write('voxels compare point ' + str(vox_point) + '\n')

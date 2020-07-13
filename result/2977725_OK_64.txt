@@ -1,0 +1,5 @@
+separate face 1 separate_edge 12 multiply_connected_geometry 0 double vertices 74 count face with more than 4 vertices 86
+obj point 8.2
+voxels compare point 8.88
+material check point File mtl and file obj must match! file must be named:D:\automated_assessment_of_3d_models\Tests\isba\2977725_OK_64.mtl
+final score 8.54

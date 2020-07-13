@@ -120,6 +120,5 @@ class Obj:
             # self.all_uv_verts = self.get_all_verts('uv')
             self.all_edges = self.get_all_edges()
             # self.all_uv_edge = self.get_all_edges(self.all_uv_verts)
-        except Exception as e:
+        except:
             self.logs = False
-            print(e)
