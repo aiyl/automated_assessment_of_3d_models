@@ -1,6 +1,4 @@
 separate face 0 separate_edge 0 multiply_connected_geometry 0 double vertices 0 count face with more than 4 vertices 0
 obj point 10.0
-voxels compare point 7.04
-material check point 0
-can not find mestrials: ['initialShadingGroup']
-final score 5.68
+UV point 1
+final score 5.5

@@ -26,6 +26,8 @@ class Obj:
     uv_coords = []
     double_vertices = []
     logs = True
+    normal_logs = ''
+    texture_logs = ''
 
     def __init__(self, file):
         self.file = file
@@ -74,7 +76,7 @@ class Obj:
             file = open(self.file, 'r')
             for line in file:
                 words = line.split()
-                if len(words) == 0 or words[0].startswith('#'):
+                if len(words) == 0 or words[0].startswith('#') or words[0].startswith('o') or words[0].startswith('newmtl'):
                     pass
                 elif words[0] == 'v':
                     list = self.create_coords_list(words, 3)
@@ -108,8 +110,14 @@ class Obj:
                         uv_list.append(faceVertList[i].split('/')[1])
                         normal_list.append(faceVertList[i].split('/')[2])
                         vertices.append(self.verts_coords[int(faces_verts[i]) - 1])
-                        uvs.append(self.uv_coords[int(uv_list[i]) - 1])
-                        normals.append(self.normals_coords[int(normal_list[i]) - 1])
+                        try:
+                            uvs.append(self.uv_coords[int(uv_list[i]) - 1])
+                        except:
+                            self.texture_logs = 'not all texture coordinates found'
+                        try:
+                            normals.append(self.normals_coords[int(normal_list[i]) - 1])
+                        except:
+                            self.normal_logs = 'not all normal coordinates found'
                     points = Points(faces_verts, vertices)
                     uv = Points(uv_list, uvs)
                     normal = Points(normal_list, normals)

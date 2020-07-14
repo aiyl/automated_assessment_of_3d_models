@@ -1,13 +1,17 @@
 from functools import reduce
-
+import numpy as np
 import math
+import trimesh
+
+
 
 class Check_normals:
     err_normals_count = 0
 
-    def __init__(self, obj):
-        self.obj = obj
-        self.main(obj)
+    def __init__(self, polygons, path_obj):
+        self.path_obj = path_obj
+        self.polygons = polygons
+        self.main(path_obj)
 
     def points_different(self, p1, p2):
         vector = []
@@ -49,7 +53,7 @@ class Check_normals:
 
         #a = [0, 0, 0] #dot inside mesh
 
-        a = self.middle_point(self.obj.verts_coords)
+        a = self.middle_point(self.polygons.verts_coords)
         print('moddle point', a)
         b = polygon.points.verts_coords[0]
         face_normal = self.sum_of_all_vectors(polygon.normals.verts_coords)
@@ -66,41 +70,47 @@ class Check_normals:
                 return False
         return True
 
-    def check_normals2(self, polygon):
-        xyz = self.middle_point(polygon.points.verts_coords)
-        a = polygon.normals.verts_coords[0]
-        b = polygon.normals.verts_coords[1]
-        c = polygon.normals.verts_coords[2]
-        normal = self.sum_of_all_vectors([a,b,c])
-
-        d = -1*(normal[0]*xyz[0]+normal[1]*xyz[1]+normal[2]*xyz[0])
-        if normal[0]*xyz[0]+normal[1]*xyz[1]+normal[2]*xyz[2] + d>=0:
-            return True
-        else:
-            return False
 
     def vector_len(self, vector):
         len = math.sqrt(vector[0]*vector[0] + vector[1]*vector[1] + vector[2]*vector[2])
         return len
-    def check_normals3(self, polygon):
 
-        v0 = polygon.points.verts_coords[0]
-        v1 = polygon.points.verts_coords[1]
-        v2 = polygon.points.verts_coords[2]
-        middle_point = self.middle_point([v0, v1, v2])
-        vec_len = self.vector_len(middle_point)
-        ray1 = []
-        ray1.append([middle_point[0], middle_point[1], middle_point[2] + vec_len])
-        ray1.append([middle_point[0], middle_point[1], middle_point[2] - vec_len]) #point inside?
-        print(ray1)
-        u = self.points_different(v0, v1)
-        v = self.points_different(v0, v2)
-        n = self.vector_multiplication(u, v)
-        if n[0] == 0 and n[1] == 0 and n[2] == 0:
-            print('triangle is degenerate')
+
+    def check_normals_5(self, obj_path):
+        #error_edge = []
+        obj = trimesh.load(obj_path, process=False)
+        try:
+            meshes_list = obj.dump()
+            mesh = meshes_list.sum()
+        except:
+            mesh = obj
+        mesh_edges = mesh.edges
+        error_edge = mesh_edges[0]
+        for i in range(len(mesh_edges)):
+            copy  = mesh_edges[i +1 : len(mesh_edges)]
+            check_in_copy = np.in1d(mesh_edges[i], copy)
+            if  np.all(check_in_copy):
+                error_edge = np.stack((error_edge, mesh_edges[i]), axis=0)
+                #error_edge.append(mesh_edges[i])
+                print(mesh_edges[i])
+
+        triangles = mesh.edges[mesh.faces]
+        #print(mesh.edges[mesh.faces])
+        error_face_normals = 0
+        for i in range(len(triangles)):
+            for k in range(len(triangles[i])):
+                compare_array = np.all(triangles[i][k],   error_edge)
+                ame_voxels = np.count_nonzero(compare_array)
+                #if triangles[i][k] in error_edge :
+                #    error_face_normals += 1
+        print(ame_voxels)
+        print(error_face_normals)
+
+        return error_edge
+
 
     def check_normals4 (self):
-        polygons = self.obj.polygons
+        polygons = self.polygons
         all_edges = []
         for i in range(len(polygons)):
             all_edges.append(sum(polygons[i].pol_edges, []))
@@ -119,7 +129,7 @@ class Check_normals:
                 self.err_normals_count += 1
 
     def main(self, obj):
-        self.check_normals4()
+        self.check_normals_5(obj)
         '''for i in range(len(obj.polygons)):
             self.check_normals(obj.polygons[i])
         print(self.err_normals_count)'''

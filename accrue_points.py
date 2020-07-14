@@ -3,7 +3,7 @@ import check_materials
 import parse_obj
 import check_obj
 import check_uv
-# import check_normals
+import check_normals
 import renders_compare
 import voxel_compare
 
@@ -89,17 +89,17 @@ class Calc_points:
             if args[i] == 'material':
                 mtl1 = parse_mtl.Mtl(self.reference)
                 mtl2 = parse_mtl.Mtl(self.solve)
-                if mtl2.logs =='':
+                if mtl2.logs != '':
+                    f.write('material check point ' + mtl2.logs + '\n')
+                    mat_point = 0
+                else:
                     checker = check_materials.Checker(mtl1, mtl2)
                     mat_point = checker.pointer()
                     if checker.need_material != '':
                         f.write('material check point ' + str(mat_point) + '\n' + 'can not find mestrials: ' + str(checker.need_material) + '\n')
                     else:
                         f.write('material check point ' + str(mat_point) + '\n')
-                    points.append(mat_point)
-                else:
-                    f.write('material check point ' + mtl2.logs + '\n')
-                # print('material points', checker.pointer())
+                points.append(mat_point)
 
             # check obj
             if args[i] == 'obj':
@@ -124,16 +124,22 @@ class Calc_points:
                 points.append(obj_point)
                 f.write('obj point ' + str(obj_point) + '\n')
 
-
             # check_uv
             if args[i] == 'uv':
-                check_uv_map = check_uv.Check_UV(obj.polygons)
-                if check_uv_map.logs != '':
-                    f.write(check_uv_map.logs + '\n')
-                f.write('UV point ' + str(check_uv_map.percent_busy / 10) + '\n')
-                points.append(UV_points(1, 10, check_uv_map.percent_busy, 10).point)
+                if obj.texture_logs == '':
+                    check_uv_map = check_uv.Check_UV(obj.polygons)
+                    if check_uv_map.logs != '':
+                        f.write(check_uv_map.logs + '\n')
+                    uv_point = UV_points(1, 10, check_uv_map.percent_busy, 10).point
+                else:
+                    uv_point = 0
+                    f.write(obj.texture_logs + '\n')
+                points.append(uv_point)
+                f.write('UV point ' + str(uv_point) + '\n')
 
-
+            #check normals
+            #if args[i] == 'normals':
+                #checking_normals = check_normals.Check_normals(obj.polygons, self.solve)
         self.point = self.percentage_ratio(points)
         f.write('final score ' + str(self.point))
         # check_normals
