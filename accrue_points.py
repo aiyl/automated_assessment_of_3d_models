@@ -21,7 +21,7 @@ class Obj_points:
             if err_percent == 0:
                 self.point = max_point
             else:
-                self.point = max(int(round((1 - err_percent * err_weight) * max_point, 0)), 0)
+                self.point = max(int(round((1 - err_percent * err_weight) * max_point, 0)), 0) # return percent
         except Exception as e:
 
             raise SystemExit
@@ -51,7 +51,7 @@ class Calc_points:
         self.calc_points(args)
 
     def percentage_ratio(self,  points):
-        max_point = len(points) * 10
+        max_point = len(points) * 10 #config
         points_sum = sum(points)
         if max_point != 0:
             return round(points_sum * 10 / max_point, 2)
@@ -113,18 +113,23 @@ class Calc_points:
                         str(check_geometry.multiply_connected_geometry) + ' double vertices ' + str(
                             len(obj.double_vertices)) +
                         ' count face with more than 4 vertices ' + str(obj.err_face) + '\n')
-                    point1 = Obj_points(30, 10, check_geometry.sep_face_count, len(obj.all_edges)).point
-                    point2 = Obj_points(20, 10, check_geometry.sep_edge_count, len(obj.all_edges)).point
+                    if check_geometry.sep_face_count <10: #logs считать с файла 10 ...
+                        pass
+
+                    point1 = Obj_points(30, 10, check_geometry.sep_face_count, len(obj.polygons)).point #шкалу баллов и отнимать от в замивисмости количества ошибок
+                    point2 = Obj_points(20, 10, check_geometry.sep_edge_count, len(obj.all_edges)).point #
                     point3 = Obj_points(30, 10, check_geometry.multiply_connected_geometry, len(obj.all_edges)).point
                     point4 = Obj_points(10, 10, len(obj.double_vertices), len(obj.verts_coords)).point
                     point5 = Obj_points(10, 10, obj.err_face, len(obj.polygons)).point
-                    obj_point = self.percentage_ratio([point1, point2, point3, point4, point5])
+                    obj_point = self.percentage_ratio([point1, point2, point3, point4, point5]) #sum percent
                 else:
                     obj_point = 0
                 points.append(obj_point)
                 f.write('obj point ' + str(obj_point) + '\n')
 
             # check_uv
+            #if 80 до 100 max point
+
             if args[i] == 'uv':
                 if obj.texture_logs == '':
                     check_uv_map = check_uv.Check_UV(obj.polygons)
@@ -138,8 +143,9 @@ class Calc_points:
                 f.write('UV point ' + str(uv_point) + '\n')
 
             #check normals
-            #if args[i] == 'normals':
-                #checking_normals = check_normals.Check_normals(obj.polygons, self.solve)
+            if args[i] == 'normals':
+                checking_normals = check_normals.Check_normals(obj.polygons, self.solve)
+
         self.point = self.percentage_ratio(points)
         f.write('final score ' + str(self.point))
         # check_normals

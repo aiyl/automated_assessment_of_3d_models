@@ -1,6 +1,6 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib lego_character.mtl
+mtllib lego_character2.mtl
 g default
 v -2.233662 2.866123 0.684966
 v 0.972757 2.866123 0.684966

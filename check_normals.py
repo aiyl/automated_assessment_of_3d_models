@@ -6,12 +6,13 @@ import trimesh
 
 
 class Check_normals:
+    logs = ''
     err_normals_count = 0
 
     def __init__(self, polygons, path_obj):
-        self.path_obj = path_obj
         self.polygons = polygons
-        self.main(path_obj)
+        self.path_obj = path_obj
+        self.main(path_obj, polygons)
 
     def points_different(self, p1, p2):
         vector = []
@@ -50,25 +51,23 @@ class Check_normals:
         return [x/len(vertices),y/len(vertices),z/len(vertices)]
 
     def check_normals(self, polygon):
-
-        #a = [0, 0, 0] #dot inside mesh
-
-        a = self.middle_point(self.polygons.verts_coords)
-        print('moddle point', a)
+        #a = self.middle_point(polygon.normals.verts_coords)
+        a= [0,0,0]
+        #print('middle point', a)
         b = polygon.points.verts_coords[0]
         face_normal = self.sum_of_all_vectors(polygon.normals.verts_coords)
         len_face_normal = math.sqrt(float(face_normal[0] * face_normal[0] + face_normal[1] * face_normal[1] + face_normal[2] * face_normal[2]))
         for i in range(len(face_normal)):
-            face_normal[i] = (face_normal[i]/len_face_normal) - len_face_normal
+            face_normal[i] = (face_normal[i]/len_face_normal)
 
         #check is it point inside mesh
         vec = self.points_different(a, b)
         if not self.scalar_multiplication(face_normal, vec):
             self.err_normals_count += 1
-        for i in range(len(polygon.normals.verts_coords)):
+        """for i in range(len(polygon.normals.verts_coords)):
             if not self.scalar_multiplication(polygon.normals.verts_coords[i], vec):
                 return False
-        return True
+        return True """
 
 
     def vector_len(self, vector):
@@ -76,60 +75,40 @@ class Check_normals:
         return len
 
 
-    def check_normals_5(self, obj_path):
-        #error_edge = []
+    def check_normals_5(self, obj):
+        #print(l)
+        startpoint = obj.center_mass
+        #startpoint = np.array([0, 0, 0])  # starting point of ray
+        directional_dist = startpoint - obj.triangles_center
+        dots = np.einsum("ij,ij->i", directional_dist, obj.face_normals) / np.linalg.norm(directional_dist, axis=1)
+        front_facing = dots < 0
+        self.err_normals_count = len(front_facing) - np.sum(front_facing)
+        print(self.err_normals_count)
+
+
+    def main(self, obj_path, polygons):
         obj = trimesh.load(obj_path, process=False)
         try:
             meshes_list = obj.dump()
             mesh = meshes_list.sum()
         except:
             mesh = obj
-        mesh_edges = mesh.edges
-        error_edge = mesh_edges[0]
-        for i in range(len(mesh_edges)):
-            copy  = mesh_edges[i +1 : len(mesh_edges)]
-            check_in_copy = np.in1d(mesh_edges[i], copy)
-            if  np.all(check_in_copy):
-                error_edge = np.stack((error_edge, mesh_edges[i]), axis=0)
-                #error_edge.append(mesh_edges[i])
-                print(mesh_edges[i])
 
-        triangles = mesh.edges[mesh.faces]
-        #print(mesh.edges[mesh.faces])
-        error_face_normals = 0
-        for i in range(len(triangles)):
-            for k in range(len(triangles[i])):
-                compare_array = np.all(triangles[i][k],   error_edge)
-                ame_voxels = np.count_nonzero(compare_array)
-                #if triangles[i][k] in error_edge :
-                #    error_face_normals += 1
-        print(ame_voxels)
-        print(error_face_normals)
+        #print(mesh.is_watertight)
 
-        return error_edge
-
-
-    def check_normals4 (self):
-        polygons = self.polygons
-        all_edges = []
-        for i in range(len(polygons)):
-            all_edges.append(sum(polygons[i].pol_edges, []))
-        all_edges = sum(all_edges, [])
-        for i in range(len(polygons)):
-            list = []
-            for k in range(len(polygons[i].pol_edges)):
-                count = all_edges.count(polygons[i].pol_edges[k])
-                if count >= 2:
-                    list.append(False)
-                else:
-                    list.append(True)
-            print(list)
-            #if list.count(False) == len(polygons[i].pol_edges):
-            if list.count(False) == len(polygons[i].pol_edges):
-                self.err_normals_count += 1
-
-    def main(self, obj):
-        self.check_normals_5(obj)
-        '''for i in range(len(obj.polygons)):
-            self.check_normals(obj.polygons[i])
-        print(self.err_normals_count)'''
+        convex = False
+        try:
+            convex = trimesh.convex.is_convex(mesh)
+        except Exception as e:
+            self.logs += ' '
+            print(e)
+        if convex:
+            for i in range(len(polygons)):
+                self.check_normals(polygons[i])
+            print(self.err_normals_count)
+        elif self.logs != '':
+            if not self.check_normals_5(mesh):
+                self.logs += '3d model has inverted normals. Counting in triangles: ' + str(self.err_normals_count)
+        else:
+            pass
+        print(self.logs)

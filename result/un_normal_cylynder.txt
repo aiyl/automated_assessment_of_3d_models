@@ -1,5 +1,0 @@
-separate face 0 separate_edge 0 multiply_connected_geometry 0 double vertices 0 count face with more than 4 vertices 0
-obj point 10.0
-UV map has intersections
-UV point 0
-final score 5.0

@@ -1,4 +1,1 @@
-separate face 0 separate_edge 0 multiply_connected_geometry 0 double vertices 0 count face with more than 4 vertices 0
-obj point 10.0
-UV point 1
-final score 5.5
+final score 0
