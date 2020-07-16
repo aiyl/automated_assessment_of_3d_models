@@ -1,6 +1,4 @@
 import numpy as np
-
-
 class Points:
     def __init__(self, point_number, verts_coords):
         self.point_number = point_number
@@ -20,10 +18,8 @@ class Polygon:
 class Obj:
     polygons = []
     err_face = 0
-    all_edges = []
     verts_coords = []
-    normals_coords = []
-    uv_coords = []
+    all_edges = []
     double_vertices = []
     logs = True
     normal_logs = ''
@@ -71,6 +67,8 @@ class Obj:
             return coords
 
     def parse(self):
+        normals_coords = []
+        uv_coords = []
         number = 0
         try:
             file = open(self.file, 'r')
@@ -88,10 +86,10 @@ class Obj:
                     self.verts_coords.append(list)
                 elif words[0] == 'vt':
                     list = self.create_coords_list(words, 2)
-                    self.uv_coords.append(list)
+                    uv_coords.append(list)
                 elif words[0] == 'vn':
                     list = self.create_coords_list(words, 3)
-                    self.normals_coords.append(list)
+                    normals_coords.append(list)
                 elif words[0] == 'f':
                     number += 1
                     faceVertList = []
@@ -111,11 +109,11 @@ class Obj:
                         normal_list.append(faceVertList[i].split('/')[2])
                         vertices.append(self.verts_coords[int(faces_verts[i]) - 1])
                         try:
-                            uvs.append(self.uv_coords[int(uv_list[i]) - 1])
+                            uvs.append(uv_coords[int(uv_list[i]) - 1])
                         except:
                             self.texture_logs = 'not all texture coordinates found'
                         try:
-                            normals.append(self.normals_coords[int(normal_list[i]) - 1])
+                            normals.append(normals_coords[int(normal_list[i]) - 1])
                         except:
                             self.normal_logs = 'not all normal coordinates found'
                     points = Points(faces_verts, vertices)
@@ -124,9 +122,6 @@ class Obj:
                     polygon = Polygon(self.get_edge(faces_verts), points, normal, uv, self.get_edge(uv_list), number)
                     self.polygons.append(polygon)
             file.close()
-            #self.all_verts = self.get_all_verts('pol')
-            # self.all_uv_verts = self.get_all_verts('uv')
             self.all_edges = self.get_all_edges()
-            # self.all_uv_edge = self.get_all_edges(self.all_uv_verts)
         except:
             self.logs = False

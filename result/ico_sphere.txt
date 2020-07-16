@@ -1,3 +1,3 @@
-separate face 0 separate_edge 0 multiply_connected_geometry 0 double vertices 0 count face with more than 4 vertices 0
-obj point 10.0
-final score 10.0
+count of wrongly aligned normals 0
+normals point 0
+final score 0

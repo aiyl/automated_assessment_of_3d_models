@@ -1,1 +1,2 @@
+ 3d model has inverted normals. Counting in triangles: 2
 final score 0

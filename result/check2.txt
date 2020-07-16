@@ -1,5 +1,8 @@
 separate face 0 separate_edge 0 multiply_connected_geometry 0 double vertices 0 count face with more than 4 vertices 0
 obj point 10.0
-voxels compare point 10.0
 material check point 0
-final score 6.67
+count of wrongly aligned normals 0
+normals point 10
+normals check point 10
+voxels compare point 10.0
+total score 7.5

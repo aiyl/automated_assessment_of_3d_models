@@ -1,2 +1,8 @@
-renders check point 1
-final score 1.0
+separate face 0 separate_edge 54 multiply_connected_geometry 86 double vertices 142 count face with more than 4 vertices 45
+obj point 2.0
+material check point File mtl and file obj must match! file must be named:D:\automated_assessment_of_3d_models\Tests\solve.mtl
+object is not a convex hull. Cannot count inverted normals
+normals check point 0
+Objects have a large difference in volume. Maybe you should see the size of the object
+voxels compare point 0
+total score 0.5

@@ -1,8 +1,4 @@
-import timeit
-
 import numpy as np
-import math
-import shapely
 from shapely.geometry import Polygon
 class Check_UV:
     logs = ''

@@ -1,0 +1,95 @@
+{
+	"config": ["obj","materials","normals", "voxels"],
+	"reference_mtl_path": "",
+	"solve_mtl_path": "",
+	"OBJ_points": [
+		{
+			"separate_face_point": {
+				"max_point": 10,
+				"err_weight1": 3,
+				"err_weight2": 4,
+				"err_weight3": 5,
+				"err_count1": 10,
+				"err_count2": 20,
+				"err_count3": 30
+			}
+		},
+		{
+			"separate_edge_point": {
+				"max_point": 10,
+				"err_weight1": 1,
+				"err_weight2": 2,
+				"err_weight3": 3,
+				"err_count1": 10,
+				"err_count2": 20,
+				"err_count3": 30
+			}
+
+		},
+		{
+			"multyply_geometry_point": {
+				"max_point": 10,
+				"err_weight1": 2,
+				"err_weight2": 3,
+				"err_weight3": 5,
+				"err_count1": 10,
+				"err_count2": 20,
+				"err_count3": 30
+			}
+		},
+		{
+			"double_vertices_point": {
+				"max_point": 10,
+				"err_weight1": 1,
+				"err_weight2": 2,
+				"err_weight3": 3,
+				"err_count1": 10,
+				"err_count2": 40,
+				"err_count3": 70
+			}
+		},
+		{
+			"err_vertices_point": {
+				"max_point": 10,
+				"err_weight1": 1,
+				"err_weight2": 2,
+				"err_weight3": 3,
+				"err_count1": 10,
+				"err_count2": 20,
+				"err_count3": 30
+			}
+		},
+		{
+			"polygons_count_point": {
+				"max_point": 10,
+				"err_weight1": 3,
+				"err_weight2": 5,
+				"err_weight3": 7,
+				"err_count1": 7000,
+				"err_count2": 8500,
+				"err_count3": 9000
+			}
+		}
+
+
+	],
+	"UV_points": {
+		"max_point": 10,
+		"err_weight1": 2,
+		"err_weight2": 3,
+		"err_weight3": 4,
+		"err_count1": 30,
+		"err_count2": 60,
+		"err_count3": 80
+	},
+	"Normals_points": {
+		"max_point": 10,
+		"err_weight1": 3,
+		"err_weight2": 5,
+		"err_weight3": 7,
+		"err_count1": 5,
+		"err_count2": 10,
+		"err_count3": 15
+	}
+
+}

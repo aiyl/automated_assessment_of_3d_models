@@ -1,3 +1,4 @@
+import os
 import traceback
 
 #path1 - эталон path2 - решение участника
@@ -11,13 +12,19 @@ class Mtl:
     materials = []
     material_name = ''
     logs = ''
-    def __init__(self, path):
+    def __init__(self, path, path_from_json):
+        self.path_from_json = path_from_json
         self.file = path
         self.parseMtl()
+
     def parseMtl(self):
         materials = []
         file = self.file
-        mtl = file.split('.')[0] + '.mtl'
+        check_file = os.path.exists(self.path_from_json)
+        if check_file:
+            mtl = self.path_from_json
+        else:
+            mtl = file.split('.')[0] + '.mtl'
         try:
             file = open(mtl, 'r')
             for line in file:

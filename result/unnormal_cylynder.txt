@@ -1,0 +1,1 @@
+error during opening D:\automated_assessment_of_3d_models\Tests\unnormal_cylynder.obj
