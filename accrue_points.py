@@ -12,6 +12,9 @@ import json
 class Calc_points:
     total_point = 0
     obj_max_point = 0
+    renders_max_point = 0
+    normals_max_point = 0
+    uv_max_point = 0
 
     def __init__(self, reference, solve, res_path, settings_path):
         self.reference = reference
@@ -21,7 +24,7 @@ class Calc_points:
         self.calc_points()
 
     def percentage_ratio(self, points):
-        max_point = len(points) * 10  # config
+        max_point = 20 + sum([self.obj_max_point/6, self.renders_max_point, self.normals_max_point, self.uv_max_point])
         points_sum = sum(points)
         if max_point != 0:
             return round(points_sum * 10 / max_point, 2)
@@ -93,6 +96,19 @@ class Calc_points:
             err_count2 <= errors < err_count3: maxpoint - err_weight3,
             errors > err_count3: 0
         }[True]
+
+    def renders_points(self, ds_list, pointer):
+        maxPoint = pointer.get('max_point')
+        self.renders_max_point = maxPoint
+        errweight = pointer.get('err_weight')
+        points = []
+        for i in range(len(ds_list)):
+            points.append(max(int(round((1 - ds_list[i] * errweight) * maxPoint, 0)), 0))
+        numerator = 10 * sum(points)
+        denominator = maxPoint*len(ds_list)
+        total = int(numerator/ denominator)
+        return total
+
     def calc_points(self):
 
         try:
@@ -111,11 +127,12 @@ class Calc_points:
 
         for i in range(len(args)):
             # check renders
+            renders_pointer = (data['Renders_points'])
             if args[i] == 'renders':
                 renders = renders_compare.Renders(self.reference, self.solve)
-                points.append(renders.render_points)
-                f.write('renders check point ' + str(renders.render_points) + '\n')
-                # print('renders check', renders.render_points)
+                renders_point = self.renders_points(renders.render_ds, renders_pointer)
+                points.append(renders_point)
+                f.write('renders check point ' + str(renders_point) + '\n')
 
             # check_voxels
             if args[i] == 'voxels':
@@ -160,6 +177,13 @@ class Calc_points:
                     err_double_verts_point = self.obj_points(3, obj_pointer, len(obj.double_vertices))
                     err_face_point = self.obj_points(4, obj_pointer, obj.err_face)
                     polygon_count = self.obj_points(5, obj_pointer, len(obj.polygons))
+                    f.write('OBJ points: ' + '\n')
+                    f.write('\t'+'separate face point: ' + str(err_sep_face_point) + '\n')
+                    f.write('\t'+'separate edge point: ' + str(err_edge_point) + '\n')
+                    f.write('\t'+'multiply connected geometry point: ' + str(err_multiply_geom_point) + '\n')
+                    f.write('\t'+'double verts point: ' + str(err_double_verts_point) + '\n')
+                    f.write('\t'+'faces point: ' + str(err_face_point) + '\n')
+                    f.write('\t'+'polygons count point: ' + str(polygon_count) + '\n')
                     f.write(
                         'separate face ' + str(check_geometry.sep_face_count) + ' separate_edge ' + str(
                             check_geometry.sep_edge_count) +
@@ -167,15 +191,16 @@ class Calc_points:
                         str(check_geometry.multiply_connected_geometry) + ' double vertices ' + str(
                             len(obj.double_vertices)) +
                         ' count face with more than 4 vertices ' + str(obj.err_face) + '\n' )
-                    obj_point = sum([err_sep_face_point, err_edge_point, err_multiply_geom_point, err_double_verts_point,
-                                    err_face_point, polygon_count])/self.obj_max_point*10
+                    obj_point = round(sum([err_sep_face_point, err_edge_point, err_multiply_geom_point, err_double_verts_point,
+                                    err_face_point, polygon_count])/self.obj_max_point*10, 2)
                 else:
                     obj_point = 0
                 points.append(obj_point)
-                f.write('obj point ' + str(obj_point) + '\n')
+                f.write('total obj point ' + str(obj_point) + '\n')
 
             if args[i] == 'uv':
                 uv_pointer = (data['UV_points'])
+                self.uv_max_point = uv_pointer.get('max_point')
                 if obj.texture_logs == '':
                     check_uv_map = check_uv.Check_UV(obj.polygons)
                     if check_uv_map.logs == '':
@@ -193,10 +218,10 @@ class Calc_points:
             if args[i] == 'normals':
                 normals_pointer = (data['Normals_points'])
                 checking_normals = check_normals.Check_normals(obj, self.solve)
+                normals_point = 0
+                self.normals_max_point = normals_pointer.get('max_point')
                 if checking_normals.logs == 'object is not a convex hull. Cannot count inverted normals':
-                    if checking_normals.err_normals == False:
-                        normals_point = 0
-                    else:
+                    if checking_normals.err_normals != False:
                         normals_point = normals_pointer.get('max_point')
                     f.write(checking_normals.logs + '\n')
                 elif checking_normals.logs =='':
@@ -208,5 +233,5 @@ class Calc_points:
                 points.append(normals_point)
                 f.write('normals check point '+str(normals_point) + '\n')
         self.total_point = self.percentage_ratio(points)
-        f.write('total score ' + str(self.total_point))
+        f.write('__________________________________________________________________'+'\n'+'total score ' + str(self.total_point))
         f.close()

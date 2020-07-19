@@ -1,5 +1,5 @@
 {
-	"config": ["obj","materials","normals", "voxels"],
+	"config": ["obj","materials","normals", "voxels", "renders", "uv"],
 	"reference_mtl_path": "",
 	"solve_mtl_path": "",
 	"OBJ_points": [
@@ -90,6 +90,9 @@
 		"err_count1": 5,
 		"err_count2": 10,
 		"err_count3": 15
+	},
+	"Renders_points": {
+		"max_point": 10,
+		"err_weight": 5
 	}
-
 }

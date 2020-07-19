@@ -4,7 +4,7 @@ import check_renders
 import trimesh
 
 class Renders:
-    render_points = 0
+    render_ds = []
     def __init__(self, reference_path, solve_path):
         self.reference_path = reference_path
         self.solve_path = solve_path
@@ -20,9 +20,7 @@ class Renders:
         reference_renders = self.get_renders(reference_path, 'reference', transformations)
 
         renders = check_renders.Check_renders(reference_renders, solve_renders)
-        self.render_points = renders.all_points
-
-
+        self.render_ds = renders.ds_list
 
     def get_renders(self, file_path, obj_type, transformations):
         renders = []
